@@ -1,0 +1,19 @@
+services:
+  mongo:
+    container_name: toptal-timezones-mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - /data/db
+  #db_provision:
+  backend:
+    container_name: toptal-timezones-backend
+    build: ./timezones-backend
+    ports:
+      - "8080:8080"
+  frontend:
+    container_name: toptal-timezones-frontend
+    build: ./timezones-frontend
+    ports:
+      - "3000:3000"
