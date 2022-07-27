@@ -2,9 +2,9 @@
   "name": "timezones-backend",
   "version": "1.0.0",
   "description": "backend for Toptal Timezones application",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "author": "Daniel Grad",
   "license": "ISC",
