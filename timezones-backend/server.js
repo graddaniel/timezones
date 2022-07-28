@@ -1,23 +1,27 @@
-const express = require('express');
-const cors = require('cors');
-const config = require('config');
+const Application = require('./src/application');
 
-const app = express();
 
-const {
-    host: CORS_HOST,
-    port: CORS_PORT,
-} = config.get('cors');
-const {
-    port: SERVER_PORT
-} = config.get('server');
+async function server() {
+    const application = new Application();
 
-app.use(cors({
-    origin: `http://${CORS_HOST}:${CORS_PORT}`,
-}));
+    const shutdown = () => {  
+        console.log('Shutting the server down');
+        application.stop((error) => {
+            console.log('Http server closed.');
+    
+            if (error) {
+                console.error(error);
+            }
+    
+            process.exit(error ? 1 : 0);
+        });
+    }
 
-app.get('/', (req, res) => {
-    res.status(200).send("Hello World!");
-});
+    process.on('SIGTERM', shutdown);
+    // process.on('SIGINT', shutdown);
 
-app.listen(SERVER_PORT, () => console.log(`Listening on port: ${SERVER_PORT}`));
+    await application.start();
+}
+
+server();
+

@@ -5,5 +5,15 @@
     },
     "server": {
         "port": 8080
+    },
+    "accessLevels": {
+        "user": "user",
+        "manager": "manager",
+        "admin": "admin"
+    },
+    "mongo": {
+        "host": "localhost",
+        "port": 27017,
+        "databaseName": "toptalTimezones"
     }
 }
