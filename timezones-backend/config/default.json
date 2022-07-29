@@ -15,5 +15,6 @@
         "host": "localhost",
         "port": 27017,
         "databaseName": "toptalTimezones"
-    }
+    },
+    "jwtExpiryTime": "1800s"
 }

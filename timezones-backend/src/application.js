@@ -21,6 +21,12 @@ class Application {
     };
 
     async start() {
+        if (!process.env.JWT_TOKEN_SECRET) {
+            console.error("Missing JWT_TOKEN_SECRET environmental variable.");
+
+            process.exit(1);
+        }
+
         await this.createServices();
 
         this.createControllers();

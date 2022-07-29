@@ -1,4 +1,9 @@
+const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
+const config = require('config');
+
+
+const JWT_EXPIRY_TIME = config.get('jwtExpiryTime');
 
 class AccountsController {
     constructor(accountsService) {
@@ -11,7 +16,7 @@ class AccountsController {
             password,
         } = req.body;
 
-        await this.accountsService.register({
+        await this.accountsService.createAccount({
             username,
             password,
         });
@@ -20,10 +25,40 @@ class AccountsController {
     }
 
     async login(req, res) {
+        const {
+            username,
+            password,
+        } = req.body;
 
+        const account = await this.accountsService.findAccount({
+            username,
+            password,
+        });
+
+        const jwtToken = jwt.sign(
+            this.extractTokenData(account),
+            process.env.JWT_TOKEN_SECRET,
+            { expiresIn: JWT_EXPIRY_TIME }
+        );
+
+        res.status(StatusCodes.OK).send(jwtToken);
     }
 
     async editAccount(req, res) {}
+
+    extractTokenData(account) {
+        const {
+            _id,
+            username,
+            accessLevel,
+        } = account;
+
+        return {
+            _id,
+            username,
+            accessLevel,
+        };
+    }
 }
 
 module.exports = AccountsController;

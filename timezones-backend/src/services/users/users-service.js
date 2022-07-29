@@ -52,9 +52,11 @@ class UsersService {
             password,
         });
 
+        const passwordHash = md5(password);
+
         return this.databaseService.findUserByCredentials({
             username,
-            password,
+            password: passwordHash,
         });
     }
 

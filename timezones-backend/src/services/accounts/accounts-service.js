@@ -1,11 +1,13 @@
 const UserAlreadyExistsError = require('./errors/user-already-exists-error');
+const UserCredentialsNotFoundError = require('./errors/user-credentials-not-found-error');
+
 
 class AccountsService {
     constructor(usersService) {
         this.usersService = usersService;
     }
 
-    async register({
+    async createAccount({
         username,
         password,
     }) {
@@ -23,14 +25,20 @@ class AccountsService {
         });
     }
 
-    async login({
+    async findAccount({
         username,
         password,
     }) {
-        return this.usersService.findUser({
+        const user = await this.usersService.findUser({
             username,
             password,
         });
+
+        if (!user) {
+            throw new UserCredentialsNotFoundError();
+        }
+
+        return user;
     }
 }
 
