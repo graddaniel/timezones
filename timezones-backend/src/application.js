@@ -3,10 +3,11 @@ const cors = require('cors');
 const config = require('config');
 
 const DatabaseService = require('./services/database-service');
-const UsersService = require('./services/users-service');
-const AccountsService = require('./services/accounts-service');
+const UsersService = require('./services/users/users-service');
+const AccountsService = require('./services/accounts/accounts-service');
 const AccountsController = require('./controllers/accounts-controller');
 const AccountRoutes = require('./routes/account-routes');
+const handleErrors = require('./middleware/handle-errors');
 
 class Application {
     static Services = {
@@ -34,7 +35,11 @@ class Application {
             origin: `http://${CORS_HOST}:${CORS_PORT}`,
         }));
 
+        this.expressApp.use(express.json())
+
         this.createRoutes();
+
+        this.expressApp.use(handleErrors);
         
         const {
             port: SERVER_PORT
@@ -43,7 +48,10 @@ class Application {
     }
 
     async stop(callback) {
-        this.server.close(callback)
+        this.server.close(callback);
+
+        const databaseService = this.servicesMap.get(Application.Services.DatabaseService);
+        await databaseService.terminate();
     }
 
     async createServices() {
@@ -81,6 +89,7 @@ class Application {
         const accountRoutes = new AccountRoutes(
             this.controllersMap.get(Application.Controllers.AccountsController),
         );
+
         this.expressApp.use('/account', accountRoutes.getRouter());
     }
 

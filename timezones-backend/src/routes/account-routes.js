@@ -1,4 +1,5 @@
 const express = require('express');
+const { wrap } = require('express-promise-wrap')
 
 class AccountRoutes {
     constructor(accountsController) {
@@ -6,8 +7,9 @@ class AccountRoutes {
 
         const router = express.Router();
 
-        router.post('/login', accountsController.login.bind(accountsController));
-        router.post('/register', accountsController.register.bind(accountsController));
+        router.post('/register', wrap(accountsController.register.bind(accountsController)));
+        router.post('/login', wrap(accountsController.login.bind(accountsController)));
+        router.patch('/edit', wrap(accountsController.editAccount.bind(accountsController)));
 
         this.router = router;
     }

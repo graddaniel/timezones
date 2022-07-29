@@ -35,7 +35,6 @@ class DatabaseService {
     }) {
         const User = mongoose.model('user', UserSchema);
 
-        //TODO make sure theres no wrapper around that
         return User.create({
             username,
             password,
@@ -43,13 +42,22 @@ class DatabaseService {
         });
     }
 
-    findUser({
+    findUserByUsername({
+        username,
+    }) {
+        const User = mongoose.model('user', UserSchema);
+
+        return User.findOne({
+            username,
+        });
+    }
+
+    findUserByCredentials({
         username,
         password
     }) {
         const User = mongoose.model('user', UserSchema);
 
-        //TODO make sure theres no wrapper around that
         return User.findOne({
             username,
             password,
