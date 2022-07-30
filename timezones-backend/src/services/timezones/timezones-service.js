@@ -17,12 +17,7 @@ class TimezonesService {
     }
     
     async addTimezone(
-        {
-            name,
-            cityName,
-            timeDifference,
-            username,
-        },
+        timezone,
         currentUser
     ) {
         if (
@@ -37,12 +32,7 @@ class TimezonesService {
             throw new UserNotFoundError(username);
         }
 
-        return this.databaseService.createTimezone({
-            name,
-            cityName,
-            timeDifference,
-            username,
-        });
+        return this.databaseService.createTimezone(timezone);
     }
 
     async editTimezoneById(

@@ -25,18 +25,10 @@ class DatabaseService {
         return await this.mongooseInstance.disconnect();
     }
 
-    createUser({
-        username,
-        password,
-        role,
-    }) {
+    createUser(user) {
         const User = mongoose.model('user', UserSchema);
 
-        return User.create({
-            username,
-            password,
-            role,
-        });
+        return User.create(user);
     }
 
     findUserByUsername(username) {
@@ -67,12 +59,7 @@ class DatabaseService {
 
         const User = mongoose.model('user', UserSchema);
 
-        return User.findOneAndUpdate({
-            username,
-        }, {
-            password,
-            role,
-        });
+        return User.findOneAndUpdate({ username }, newUserData);
     }
 
     findAllUsers() {
@@ -87,20 +74,10 @@ class DatabaseService {
         return User.deleteOne({ username });
     }
 
-    createTimezone({
-        name,
-        cityName,
-        timeDifference,
-        username,
-    }) {
+    createTimezone(timezone) {
         const Timezone = mongoose.model('timezone', TimezoneSchema);
 
-        return Timezone.create({
-            name,
-            cityName,
-            timeDifference,
-            username,
-        });
+        return Timezone.create(timezone);
     }
 
     async findTimezoneById(id) {

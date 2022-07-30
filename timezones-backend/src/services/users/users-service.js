@@ -29,7 +29,6 @@ class UsersService {
         return this.databaseService.createUser({
             username,
             password: passwordHash,
-            role,
         });
     }
 
