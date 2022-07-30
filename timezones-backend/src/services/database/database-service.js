@@ -85,6 +85,12 @@ class DatabaseService {
         return User.find();
     }
 
+    deleteUserByUsername(username) {
+        const User = mongoose.model('user', UserSchema);
+
+        return User.deleteOne({ username });
+    }
+
     createTimezone({
         name,
         cityName,

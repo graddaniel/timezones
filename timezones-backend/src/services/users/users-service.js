@@ -78,7 +78,7 @@ class UsersService {
         });
     }
 
-    async editUser(user, editor) {
+    async editUser(user, currentUserRole) {
         await this.validateUserEdit(user);
 
         const {
@@ -87,16 +87,18 @@ class UsersService {
             role,
         } = user;
 
-        if (
-            editor.role !== ROLES.admin &&
-            role === ROLES.admin
-        ) {
-            throw new InsufficientPrivilegesError();
+        const foundUser = await this.databaseService.findUserByUsername(username);
+        if (!foundUser) {
+            throw new UserNotFoundError(username);
         }
 
-        const userExists = await this.userExists(username);
-        if (!userExists) {
-            throw new UserNotFoundError(username);
+        if (
+            currentUserRole !== ROLES.admin && (
+                role === ROLES.admin ||
+                foundUser.role === ROLES.admin
+            )
+        ) {
+            throw new InsufficientPrivilegesError();
         }
 
         return this.databaseService.updateUserByUsername(
@@ -111,6 +113,24 @@ class UsersService {
     async getAll() {
         //TODO Pagination
         return this.databaseService.findAllUsers();
+    }
+
+    async deleteUserByUsername(username, curentUserRole) {
+        await this.validateUsername({ username });
+
+        const foundUser = await this.databaseService.findUserByUsername(username);
+        if (!foundUser) {
+            throw new UserNotFoundError(username);
+        }
+
+        if (
+            curentUserRole !== ROLES.admin &&
+            foundUser.role === ROLES.admin
+        ) {
+            throw new InsufficientPrivilegesError();
+        }
+
+        return this.databaseService.deleteUserByUsername(username);
     }
 
     async userExists(username) {

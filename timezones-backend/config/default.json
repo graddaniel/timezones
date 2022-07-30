@@ -8,7 +8,7 @@
     },
     "roles": {
         "user": "user",
-        "manager": "manager",
+        "userManager": "userManager",
         "admin": "admin"
     },
     "mongo": {

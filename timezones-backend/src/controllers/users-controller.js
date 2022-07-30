@@ -17,17 +17,23 @@ class UsersController {
             username,
             password,
             role,
-        }, {
-            role: req.user.role,
-        });
+        }, req.user.role);
 
-        res.status(StatusCodes.OK).send(`Account ${username} succesfully edited.`);
+        res.status(StatusCodes.OK).send(`User ${username} succesfully edited.`);
     }
 
     async listAllUsers(req, res) {
         const users = await this.usersService.getAll();
 
         res.status(StatusCodes.OK).json(users);
+    }
+
+    async deleteUser(req, res) {
+        const { username } = req.body;
+
+        await this.usersService.deleteUserByUsername(username, req.user.role);
+
+        res.status(StatusCodes.OK).send(`User ${username} succesfully deleted.`);
     }
 }
 

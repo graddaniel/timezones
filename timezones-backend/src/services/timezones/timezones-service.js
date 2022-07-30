@@ -85,9 +85,10 @@ class TimezonesService {
         }
 
         if (
-            currentUser.role !== ROLES.admin &&
-            timezone.username !== currentUser.username &&
-            foundTimezone.username !== currentUser.username
+            currentUser.role !== ROLES.admin && (
+                timezone.username !== currentUser.username ||
+                foundTimezone.username !== currentUser.username
+            )
         ) {
             throw new InsufficientPrivilegesError();
         }

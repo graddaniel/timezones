@@ -10,14 +10,15 @@ class UserRoutes {
         const router = express.Router();
 
         const {
-            manager: MANAGER,
+            userManager: USER_MANAGER,
             admin: ADMIN,
         } = config.get('roles');
         router.use(extractUserFromJWT);
-        router.use(allow([MANAGER, ADMIN]));
+        router.use(allow([USER_MANAGER, ADMIN]));
 
         router.patch('/edit', wrap(usersController.editUser.bind(usersController)));
-        router.get('/listAll', wrap(usersController.listAllUsers.bind(usersController)))
+        router.get('/listAll', wrap(usersController.listAllUsers.bind(usersController)));
+        router.delete('/delete', wrap(usersController.deleteUser.bind(usersController)));
 
         this.router = router;
     }
