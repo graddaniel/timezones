@@ -9,10 +9,10 @@ const ROLES = config.get('roles');
 
 class TimezonesService {
     constructor(
-        databaseService,
+        timezonesRepository,
         usersService,
     ) {
-        this.databaseService = databaseService;
+        this.timezonesRepository = timezonesRepository;
         this.usersService = usersService;
     }
     
@@ -32,7 +32,7 @@ class TimezonesService {
             throw new UserNotFoundError(timezone.username);
         }
 
-        return this.databaseService.createTimezone(timezone);
+        return this.timezonesRepository.createTimezone(timezone);
     }
 
     async editTimezoneById(
@@ -44,7 +44,7 @@ class TimezonesService {
             username,
         } = timezone;
 
-        const foundTimezone = await this.databaseService.findTimezoneById(id);
+        const foundTimezone = await this.timezonesRepository.findTimezone({ _id: id });
         if (!foundTimezone) {
             throw new TimezoneNotFoundError(id);
         }
@@ -63,14 +63,14 @@ class TimezonesService {
             throw new UserNotFoundError(username);
         }
 
-        return this.databaseService.updateTimezoneById(
-            id,
+        return this.timezonesRepository.updateTimezone(
+            { _id:id },
             timezone,
         );
     }
 
     async deleteTimezoneById(id, currentUser) {
-        const timezone = await this.databaseService.findTimezoneById(id);
+        const timezone = await this.timezonesRepository.findTimezone({ _id: id });
 
         if (!timezone) {
             throw new TimezoneNotFoundError(id);
@@ -83,7 +83,7 @@ class TimezonesService {
             throw new InsufficientPrivilegesError();
         }
 
-        return this.databaseService.deleteTimezoneById(id);
+        return this.timezonesRepository.deleteTimezone({ _id: id });
     }
 
     async getTimezonesByUser(user) {
@@ -93,11 +93,9 @@ class TimezonesService {
             role,
         } = user;
 
-        if (role === ROLES.admin) {
-            return this.databaseService.findAllTimezones();
-        }
-
-        return this.databaseService.findTimezonesByUsername(username);
+        return this.timezonesRepository.findTimezones(
+            role === ROLES.admin ? {} : { username }
+        );
     }
 }
 

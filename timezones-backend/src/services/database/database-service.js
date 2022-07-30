@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 
-const UserSchema = require('../../schemas/user-schema');
-const TimezoneSchema = require('../../schemas/timezone-schema');
-
-
 class DatabaseService {
     constructor({
         host,
@@ -25,64 +21,24 @@ class DatabaseService {
         return await this.mongooseInstance.disconnect();
     }
 
-    createUser(user) {
-        const User = mongoose.model('user', UserSchema);
-
-        return User.create(user);
+    create(model, docs) {
+        return model.create(docs);
     }
 
-    findUser(user) {
-        const User = mongoose.model('user', UserSchema);
-
-        return User.findOne(user);
+    find(model, conditions = {}) {
+        return model.find(conditions);
     }
 
-    async updateUserByUsername(username, newUserData) {
-        const User = mongoose.model('user', UserSchema);
-
-        return User.findOneAndUpdate({ username }, newUserData);
+    findOne(model, conditions = {}) {
+        return model.findOne(conditions);
     }
 
-    findAllUsers() {
-        const User = mongoose.model('user', UserSchema);
-
-        return User.find();
+    findOneAndUpdate(model, conditions = {}, update = {}) {
+        return model.findOneAndUpdate(conditions, update);
     }
 
-    deleteUserByUsername(username) {
-        const User = mongoose.model('user', UserSchema);
-
-        return User.deleteOne({ username });
-    }
-
-    createTimezone(timezone) {
-        const Timezone = mongoose.model('timezone', TimezoneSchema);
-
-        return Timezone.create(timezone);
-    }
-
-    async findTimezoneById(id) {
-        const Timezone = mongoose.model('timezone', TimezoneSchema);
-
-        return Timezone.findOne({ _id: id });
-    }
-
-    deleteTimezoneById(id) {
-        const Timezone = mongoose.model('timezone', TimezoneSchema);
-
-        return Timezone.deleteOne({ _id: id });
-    }
-
-    findTimezonesByUsername(username) {
-        const Timezone = mongoose.model('timezone', TimezoneSchema);
-
-        return Timezone.find({ username });
-    }
-
-    findAllTimezones() {
-        const Timezone = mongoose.model('timezone', TimezoneSchema);
-
-        return Timezone.find();
+    deleteOne(model, conditions = {}) {
+        return model.deleteOne(conditions);
     }
 }
 

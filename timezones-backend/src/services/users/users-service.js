@@ -11,8 +11,8 @@ const InsufficientPrivilegesError = require('../../generic-errors/insufficient-p
 const ROLES = config.get('roles');
 
 class UsersService {
-    constructor(databaseService) {
-        this.databaseService = databaseService;
+    constructor(usersRepository) {
+        this.usersRepository = usersRepository;
     }
 
     async createUserFromCredentials(credentials) {
@@ -31,7 +31,7 @@ class UsersService {
 
         const passwordHash = md5(password);
 
-        return this.databaseService.createUser({
+        return this.usersRepository.createUser({
             username,
             password: passwordHash,
         });
@@ -43,7 +43,7 @@ class UsersService {
     }) {
         const passwordHash = md5(password);
 
-        return this.databaseService.findUser({
+        return this.usersRepository.findUser({
             username,
             password: passwordHash,
         });
@@ -56,7 +56,7 @@ class UsersService {
             role,
         } = user;
 
-        const foundUser = await this.databaseService.findUser({ username });
+        const foundUser = await this.usersRepository.findUser({ username });
         if (!foundUser) {
             throw new UserNotFoundError(username);
         }
@@ -70,8 +70,10 @@ class UsersService {
             throw new InsufficientPrivilegesError();
         }
 
-        return this.databaseService.updateUserByUsername(
-            username, 
+        return this.usersRepository.updateUser(
+            { 
+                username,
+            }, 
             {
                 password: isValidMD5(password) ? password : md5(password),
                 role,
@@ -81,11 +83,11 @@ class UsersService {
 
     async getAll() {
         //TODO Pagination
-        return this.databaseService.findAllUsers();
+        return this.usersRepository.findUsers({});
     }
 
     async deleteUserByUsername(username, curentUserRole) {
-        const foundUser = await this.databaseService.findUser({ username });
+        const foundUser = await this.usersRepository.findUser({ username });
         if (!foundUser) {
             throw new UserNotFoundError(username);
         }
@@ -97,11 +99,11 @@ class UsersService {
             throw new InsufficientPrivilegesError();
         }
 
-        return this.databaseService.deleteUserByUsername(username);
+        return this.usersRepository.deleteUser({ username });
     }
 
     async findUserByUsername(username) {
-        return this.databaseService.findUser({ username });
+        return this.usersRepository.findUser({ username });
     }
 }
 

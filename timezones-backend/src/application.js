@@ -8,7 +8,6 @@ const AccountRoutes = require('./routes/account-routes');
 const TimezoneRoutes = require('./routes/timezone-routes');
 const UserRoutes = require('./routes/user-routes');
 
-
 const AccountsController = require('./controllers/accounts-controller');
 const TimezonesController = require('./controllers/timezones-controller');
 const UsersController = require('./controllers/users-controller');
@@ -17,6 +16,9 @@ const AccountsService = require('./services/accounts/accounts-service');
 const DatabaseService = require('./services/database/database-service');
 const TimezonesService = require('./services/timezones/timezones-service');
 const UsersService = require('./services/users/users-service');
+
+const TimezonesRepository = require('./services/timezones/timezones-repository');
+const UsersRepository = require('./services/users/users-repository');
 
 
 class Application {
@@ -80,13 +82,15 @@ class Application {
         await databaseService.init();
         servicesMap.set(Application.Services.DatabaseService, databaseService);
     
-        const usersService = new UsersService(databaseService);
+        const usersRepository = new UsersRepository(databaseService);
+        const usersService = new UsersService(usersRepository);
         servicesMap.set(Application.Services.UsersService, usersService);
     
         const accountsService = new AccountsService(usersService);
         servicesMap.set(Application.Services.AccountsService, accountsService);
 
-        const timezonesService = new TimezonesService(databaseService, usersService);
+        const timezonesRepository = new TimezonesRepository(databaseService);
+        const timezonesService = new TimezonesService(timezonesRepository, usersService);
         servicesMap.set(Application.Services.TimezonesService, timezonesService);
     
         this.servicesMap = servicesMap;
