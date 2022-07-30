@@ -22,14 +22,14 @@ class TimezonesService {
     ) {
         if (
             currentUser.role !== ROLES.admin &&
-            username !== currentUser.username
+            timezone.username !== currentUser.username
         ) {
             throw new InsufficientPrivilegesError();
         }
 
-        const foundUser = await this.usersService.findUserByUsername(username);
+        const foundUser = await this.usersService.findUser(timezone.username);
         if (!foundUser) {
-            throw new UserNotFoundError(username);
+            throw new UserNotFoundError(timezone.username);
         }
 
         return this.databaseService.createTimezone(timezone);

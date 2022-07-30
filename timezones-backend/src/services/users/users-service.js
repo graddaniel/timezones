@@ -15,11 +15,16 @@ class UsersService {
         this.databaseService = databaseService;
     }
 
-    async createUserFromCredentials({
-        username,
-        password,
-    }) {
-        const foundUser = await this.findUserByUsername(username);
+    async createUserFromCredentials(credentials) {
+        const {
+            username,
+            password,
+        } = credentials;
+
+        const foundUser = await this.findUser({
+            username,
+            password,
+        });
         if (foundUser) {
             throw new UserAlreadyExistsError(username);
         }
@@ -38,7 +43,7 @@ class UsersService {
     }) {
         const passwordHash = md5(password);
 
-        return this.databaseService.findUserByCredentials({
+        return this.databaseService.findUser({
             username,
             password: passwordHash,
         });
@@ -51,7 +56,7 @@ class UsersService {
             role,
         } = user;
 
-        const foundUser = await this.databaseService.findUserByUsername(username);
+        const foundUser = await this.databaseService.findUser({ username });
         if (!foundUser) {
             throw new UserNotFoundError(username);
         }
@@ -80,7 +85,7 @@ class UsersService {
     }
 
     async deleteUserByUsername(username, curentUserRole) {
-        const foundUser = await this.databaseService.findUserByUsername(username);
+        const foundUser = await this.databaseService.findUser({ username });
         if (!foundUser) {
             throw new UserNotFoundError(username);
         }
@@ -96,7 +101,7 @@ class UsersService {
     }
 
     async findUserByUsername(username) {
-        return this.databaseService.findUserByUsername(username);
+        return this.databaseService.findUser({ username });
     }
 }
 

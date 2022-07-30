@@ -31,32 +31,13 @@ class DatabaseService {
         return User.create(user);
     }
 
-    findUserByUsername(username) {
+    findUser(user) {
         const User = mongoose.model('user', UserSchema);
 
-        return User.findOne({
-            username,
-        });
-    }
-
-    findUserByCredentials({
-        username,
-        password
-    }) {
-        const User = mongoose.model('user', UserSchema);
-
-        return User.findOne({
-            username,
-            password,
-        });
+        return User.findOne(user);
     }
 
     async updateUserByUsername(username, newUserData) {
-        const {
-            password,
-            role,
-        } = newUserData;
-
         const User = mongoose.model('user', UserSchema);
 
         return User.findOneAndUpdate({ username }, newUserData);
