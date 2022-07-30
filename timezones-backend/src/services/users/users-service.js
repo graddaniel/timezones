@@ -6,15 +6,15 @@ const isValidMD5 = require('../../utils/is-valid-md5');
 
 const InvalidUsernameError = require('./errors/invalid-username-error');
 const InvalidPasswordError = require('./errors/invalid-password-error');
-const InvalidAccessLevelError = require('./errors/invalid-access-level-error');
+const InvalidRoleError = require('./errors/invalid-role-error');
 
 const UserAlreadyExistsError = require('./errors/user-already-exists-error');
 const UserNotFoundError = require('./errors/user-not-found-error');
 
 const InsufficientPrivilegesError = require('../../generic-errors/insufficient-privileges-error');
 
-const ACCESS_LEVELS = config.get('accessLevels');
-const ACCESS_LEVELS_VALUES = Object.values(ACCESS_LEVELS);
+const ROLES = config.get('roles');
+const ROLES_VALUES = Object.values(ROLES);
 
 const usernameSchema = yup.object().shape({
     username: yup.string().min(4).max(32).required().matches(/^\w+$/),
@@ -22,12 +22,12 @@ const usernameSchema = yup.object().shape({
 
 const userDataSchema = yup.object().shape({
     password: yup.string().min(8).max(32).required().matches(/^\w+$/),
-    accessLevel: yup.mixed().oneOf(ACCESS_LEVELS_VALUES).notRequired(),
+    role: yup.mixed().oneOf(ROLES_VALUES).notRequired(),
 });
 
 const editedUserDataSchema = yup.object().shape({
     password: yup.string().min(8).max(32).notRequired().matches(/^\w+$/),
-    accessLevel: yup.mixed().oneOf(ACCESS_LEVELS_VALUES).notRequired(),
+    role: yup.mixed().oneOf(ROLES_VALUES).notRequired(),
 });
 
 class UsersService {
@@ -38,12 +38,12 @@ class UsersService {
     async createUser({
         username,
         password,
-        accessLevel,
+        role,
     }) {
         await this.validateUser({
             username,
             password,
-            accessLevel,
+            role,
         })
 
         const userExists = await this.userExists(username);
@@ -57,7 +57,7 @@ class UsersService {
         return this.databaseService.createUser({
             username,
             password: passwordHash,
-            accessLevel,
+            role,
         });
     }
 
@@ -84,18 +84,17 @@ class UsersService {
         const {
             username,
             password,
-            accessLevel,
+            role,
         } = user;
 
         if (
-            editor.accessLevel !== ACCESS_LEVELS.admin &&
-            accessLevel === ACCESS_LEVELS.admin
+            editor.role !== ROLES.admin &&
+            role === ROLES.admin
         ) {
             throw new InsufficientPrivilegesError();
         }
 
         const userExists = await this.userExists(username);
-
         if (!userExists) {
             throw new UserNotFoundError(username);
         }
@@ -104,7 +103,7 @@ class UsersService {
             username, 
             {
                 password: isValidMD5(password) ? password : md5(password),
-                accessLevel,
+                role,
             }
         );
     }
@@ -148,8 +147,8 @@ class UsersService {
         try {
             await userDataSchema.validate(user);
         } catch (error) {
-            if (error.path === 'accessLevel') {
-                throw new InvalidAccessLevelError(user.accessLevel);
+            if (error.path === 'role') {
+                throw new InvalidRoleError(user.role);
             }
             else if (error.path === 'password') {
                 throw new InvalidPasswordError(user.password);
@@ -163,8 +162,8 @@ class UsersService {
         try {
             await editedUserDataSchema.validate(user);
         } catch (error) {
-            if (error.path === 'accessLevel') {
-                throw new InvalidAccessLevelError(user.accessLevel);
+            if (error.path === 'role') {
+                throw new InvalidRoleError(user.role);
             }
             else if (error.path === 'password') {
                 throw new InvalidPasswordError(user.password);

@@ -48,13 +48,13 @@ class AccountsController {
         const {
             _id,
             username,
-            accessLevel,
+            role,
         } = account;
 
         return {
             _id,
             username,
-            accessLevel,
+            role,
         };
     }
 }

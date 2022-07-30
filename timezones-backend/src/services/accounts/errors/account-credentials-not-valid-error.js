@@ -1,7 +1,7 @@
-class AccountCredentialsNotValidError extends Error {
+class AccountCredentialsNotFound extends Error {
     constructor() {
         super(`Account credentials not valid.`);
     }
 }
 
-module.exports = AccountCredentialsNotValidError;
+module.exports = AccountCredentialsNotFound;

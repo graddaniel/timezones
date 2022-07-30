@@ -12,7 +12,7 @@ class UserRoutes {
         const {
             manager: MANAGER,
             admin: ADMIN,
-        } = config.get('accessLevels');
+        } = config.get('roles');
         router.use(extractUserFromJWT);
         router.use(allow([MANAGER, ADMIN]));
 

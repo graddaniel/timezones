@@ -1,11 +1,8 @@
-const {
-    StatusCodes,
-} = require('http-status-codes');
 const InsufficientPrivilegesError = require('../generic-errors/insufficient-privileges-error');
 
-module.exports = function allow(accessLevels) {
+module.exports = function allow(roles) {
     return (req, res, next) => {
-        if (!accessLevels.includes(req.user.accessLevel)) {
+        if (!roles.includes(req.user.role)) {
             throw new InsufficientPrivilegesError();
         }
     

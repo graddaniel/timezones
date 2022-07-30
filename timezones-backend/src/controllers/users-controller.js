@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 
 
@@ -11,15 +10,15 @@ class UsersController {
         const {
             username,
             password,
-            accessLevel,
+            role,
         } = req.body;
 
         await this.usersService.editUser({
             username,
             password,
-            accessLevel,
+            role,
         }, {
-            accessLevel: req.user.accessLevel,
+            role: req.user.role,
         });
 
         res.status(StatusCodes.OK).send(`Account ${username} succesfully edited.`);

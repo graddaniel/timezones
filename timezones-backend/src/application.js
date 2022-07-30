@@ -5,26 +5,31 @@ const config = require('config');
 const handleErrors = require('./middleware/handle-errors');
 
 const AccountRoutes = require('./routes/account-routes');
+const TimezoneRoutes = require('./routes/timezone-routes');
 const UserRoutes = require('./routes/user-routes');
 
 
 const AccountsController = require('./controllers/accounts-controller');
+const TimezonesController = require('./controllers/timezones-controller');
 const UsersController = require('./controllers/users-controller');
 
 const AccountsService = require('./services/accounts/accounts-service');
-const DatabaseService = require('./services/database-service');
+const DatabaseService = require('./services/database/database-service');
+const TimezonesService = require('./services/timezones/timezones-service');
 const UsersService = require('./services/users/users-service');
 
 
 class Application {
     static Services = {
-        DatabaseService: 'DatabaseService',
-        UsersService: 'UsersService',
         AccountsService: 'AccountsService',
+        DatabaseService: 'DatabaseService',
+        TimezonesService: 'TimezonesService',
+        UsersService: 'UsersService',
     };
 
     static Controllers = {
         AccountsController: 'AccountsController',
+        TimezonesController: 'TimezonesController',
         UsersController: 'UsersController',
     };
 
@@ -80,6 +85,9 @@ class Application {
     
         const accountsService = new AccountsService(usersService);
         servicesMap.set(Application.Services.AccountsService, accountsService);
+
+        const timezonesService = new TimezonesService(databaseService, usersService);
+        servicesMap.set(Application.Services.TimezonesService, timezonesService);
     
         this.servicesMap = servicesMap;
     }
@@ -93,6 +101,14 @@ class Application {
         controllersMap.set(
             Application.Controllers.AccountsController,
             accountsController,
+        );
+
+        const timezonesController = new TimezonesController(
+            this.servicesMap.get(Application.Services.TimezonesService),
+        );
+        controllersMap.set(
+            Application.Controllers.TimezonesController,
+            timezonesController,
         );
 
         const usersController = new UsersController(
@@ -112,6 +128,11 @@ class Application {
             this.controllersMap.get(Application.Controllers.AccountsController),
         );
         this.expressApp.use('/account', accountRoutes.getRouter());
+
+        const timezoneRoutes = new TimezoneRoutes(
+            this.controllersMap.get(Application.Controllers.TimezonesController),
+        );
+        this.expressApp.use('/timezone', timezoneRoutes.getRouter());
 
         const userRoutes = new UserRoutes(
             this.controllersMap.get(Application.Controllers.UsersController),
