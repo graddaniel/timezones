@@ -1,10 +1,12 @@
 const { StatusCodes } = require('http-status-codes');
 
-const UserAlreadyExistsError = require('../services/accounts/errors/user-already-exists-error');
-const UserCredentialsNotFoundError = require('../services/accounts/errors/user-credentials-not-found-error');
+const AccountCredentialsNotValidError = require('../services/accounts/errors/account-credentials-not-valid-error');
+
+const UserAlreadyExistsError = require('../services/users/errors/user-already-exists-error');
 const InvalidUsernameError = require('../services/users/errors/invalid-username-error');
 const InvalidPasswordError = require('../services/users/errors/invalid-password-error');
 const InvalidAccessLevelError = require('../services/users/errors/invalid-access-level-error');
+const InsufficientPrivilegesError = require('../generic-errors/insufficient-privileges-error');
 
 
 module.exports = function handleErrors(err, req, res, next) {
@@ -12,21 +14,20 @@ module.exports = function handleErrors(err, req, res, next) {
         return next(err)
     }
 
-    console.log("handleErrors", JSON.stringify(err), err.message, err.constructor)
+    console.log("handleErrors", JSON.stringify(err), err.message, err.constructor);
 
     switch(err.constructor) {
         case UserAlreadyExistsError:
-            res.status(StatusCodes.CONFLICT).send(err.message);
-            return;
-        case UserCredentialsNotFoundError:
-            res.status(StatusCodes.NOT_FOUND).send(err.message);
-            return;
+            return res.status(StatusCodes.CONFLICT).send(err.message);
+        case AccountCredentialsNotValidError:
+            return res.status(StatusCodes.NOT_FOUND).send(err.message);;
         case InvalidUsernameError:
         case InvalidPasswordError:
         case InvalidAccessLevelError:
-            res.status(StatusCodes.BAD_REQUEST).send(err.message);
-            return;
+            return res.status(StatusCodes.BAD_REQUEST).send(err.message);;
+        case InsufficientPrivilegesError:
+            return res.status(StatusCodes.FORBIDDEN).send('Insufficient privileges');
         default:
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Unexpected error.");
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Unexpected error.");
     }
 }

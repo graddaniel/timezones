@@ -30,7 +30,7 @@ class AccountsController {
             password,
         } = req.body;
 
-        const account = await this.accountsService.findAccount({
+        const account = await this.accountsService.validateAccount({
             username,
             password,
         });
@@ -43,8 +43,6 @@ class AccountsController {
 
         res.status(StatusCodes.OK).send(jwtToken);
     }
-
-    async editAccount(req, res) {}
 
     extractTokenData(account) {
         const {

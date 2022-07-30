@@ -42,9 +42,7 @@ class DatabaseService {
         });
     }
 
-    findUserByUsername({
-        username,
-    }) {
+    findUserByUsername(username) {
         const User = mongoose.model('user', UserSchema);
 
         return User.findOne({
@@ -61,6 +59,28 @@ class DatabaseService {
         return User.findOne({
             username,
             password,
+        });
+    }
+
+    findAllUsers() {
+        const User = mongoose.model('user', UserSchema);
+
+        return User.find();
+    }
+
+    async updateUserByUsername(username, newUserData) {
+        const {
+            password,
+            accessLevel,
+        } = newUserData;
+
+        const User = mongoose.model('user', UserSchema);
+
+        return User.findOneAndUpdate({
+            username,
+        }, {
+            password,
+            accessLevel,
         });
     }
 }

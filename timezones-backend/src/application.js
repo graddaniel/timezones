@@ -2,12 +2,19 @@ const express = require('express');
 const cors = require('cors');
 const config = require('config');
 
+const handleErrors = require('./middleware/handle-errors');
+
+const AccountRoutes = require('./routes/account-routes');
+const UserRoutes = require('./routes/user-routes');
+
+
+const AccountsController = require('./controllers/accounts-controller');
+const UsersController = require('./controllers/users-controller');
+
+const AccountsService = require('./services/accounts/accounts-service');
 const DatabaseService = require('./services/database-service');
 const UsersService = require('./services/users/users-service');
-const AccountsService = require('./services/accounts/accounts-service');
-const AccountsController = require('./controllers/accounts-controller');
-const AccountRoutes = require('./routes/account-routes');
-const handleErrors = require('./middleware/handle-errors');
+
 
 class Application {
     static Services = {
@@ -18,6 +25,7 @@ class Application {
 
     static Controllers = {
         AccountsController: 'AccountsController',
+        UsersController: 'UsersController',
     };
 
     async start() {
@@ -86,20 +94,30 @@ class Application {
             Application.Controllers.AccountsController,
             accountsController,
         );
+
+        const usersController = new UsersController(
+            this.servicesMap.get(Application.Services.UsersService),
+        );
+        controllersMap.set(
+            Application.Controllers.UsersController,
+            usersController,
+        );
     
         this.controllersMap = controllersMap;
     }
 
     createRoutes() {
-        //TODO Account or Accounts? unify that!
+        //TODO Account or Accounts? fix that! Controller also plural?
         const accountRoutes = new AccountRoutes(
             this.controllersMap.get(Application.Controllers.AccountsController),
         );
-
         this.expressApp.use('/account', accountRoutes.getRouter());
+
+        const userRoutes = new UserRoutes(
+            this.controllersMap.get(Application.Controllers.UsersController),
+        );
+        this.expressApp.use('/user', userRoutes.getRouter());
     }
-
-
 }
 
 module.exports = Application;

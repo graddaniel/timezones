@@ -1,5 +1,4 @@
-const UserAlreadyExistsError = require('./errors/user-already-exists-error');
-const UserCredentialsNotFoundError = require('./errors/user-credentials-not-found-error');
+const AccountCredentialsNotValidError = require('./errors/account-credentials-not-valid-error');
 
 
 class AccountsService {
@@ -11,21 +10,13 @@ class AccountsService {
         username,
         password,
     }) {
-        const userExists = await this.usersService.userExists({
-            username,
-        });
-
-        if (userExists) {
-            throw new UserAlreadyExistsError(username);
-        }
-
         await this.usersService.createUser({
             username,
             password,
         });
     }
 
-    async findAccount({
+    async validateAccount({
         username,
         password,
     }) {
@@ -35,7 +26,7 @@ class AccountsService {
         });
 
         if (!user) {
-            throw new UserCredentialsNotFoundError();
+            throw new AccountCredentialsNotValidError();
         }
 
         return user;
