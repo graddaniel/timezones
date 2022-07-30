@@ -25,10 +25,6 @@ class DatabaseService {
         return await this.mongooseInstance.disconnect();
     }
 
-    isInitialized() {
-        return this.mongooseInstance !== undefined;
-    }
-
     createUser({
         username,
         password,

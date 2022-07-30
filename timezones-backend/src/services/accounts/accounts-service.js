@@ -10,17 +10,17 @@ class AccountsService {
         username,
         password,
     }) {
-        await this.usersService.createUser({
+        await this.usersService.createUserFromCredentials({
             username,
             password,
         });
     }
 
-    async validateAccount({
+    async verifyAccount({
         username,
         password,
     }) {
-        const user = await this.usersService.findUser({
+        const user = await this.usersService.findUserByCredentials({
             username,
             password,
         });

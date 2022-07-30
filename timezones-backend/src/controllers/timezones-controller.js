@@ -1,5 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 
+const TimezoneValidator = require('../services/timezones/timezone-validator');
+const UserValidator = require('../services/users/user-validator');
 
 class TimezonesController {
     constructor(timezonesService) {
@@ -14,12 +16,17 @@ class TimezonesController {
             username,
         } = req.body;
 
-        await this.timezonesService.addTimezone({
+        const newTimezone = {
             name,
             cityName,
             timeDifference,
             username,
-        }, req.user);
+        };
+
+        await TimezoneValidator.validateEditedTimezone(newTimezone);
+        await UserValidator.validateUsername(username);
+
+        await this.timezonesService.addTimezone(newTimezone, req.user);
 
         res.status(StatusCodes.OK).send('Timezone succesfully added.');
     }
@@ -33,12 +40,17 @@ class TimezonesController {
             username,
         } = req.body;
 
-        await this.timezonesService.editTimezoneById(id, {
+        const editedTimezone = {
             name,
             cityName,
             timeDifference,
             username,
-        }, req.user);
+        }
+        
+        await TimezoneValidator.validateEditedTimezone(editedTimezone);
+        await UserValidator.validateUsername(username);
+
+        await this.timezonesService.editTimezoneById(id, editedTimezone, req.user);
 
         res.status(StatusCodes.OK).send('Timezone succesfully edited.');
     }

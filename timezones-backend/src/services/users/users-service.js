@@ -1,12 +1,7 @@
 const md5 = require('md5');
-const yup = require('yup');
 const config = require('config');
 
 const isValidMD5 = require('../../utils/is-valid-md5');
-
-const InvalidUsernameError = require('./errors/invalid-username-error');
-const InvalidPasswordError = require('./errors/invalid-password-error');
-const InvalidRoleError = require('./errors/invalid-role-error');
 
 const UserAlreadyExistsError = require('./errors/user-already-exists-error');
 const UserNotFoundError = require('./errors/user-not-found-error');
@@ -14,41 +9,18 @@ const UserNotFoundError = require('./errors/user-not-found-error');
 const InsufficientPrivilegesError = require('../../generic-errors/insufficient-privileges-error');
 
 const ROLES = config.get('roles');
-const ROLES_VALUES = Object.values(ROLES);
-
-const usernameSchema = yup.object().shape({
-    username: yup.string().min(4).max(32).required().matches(/^\w+$/),
-});
-
-const userDataSchema = yup.object().shape({
-    password: yup.string().min(8).max(32).required().matches(/^\w+$/),
-    role: yup.mixed().oneOf(ROLES_VALUES).notRequired(),
-});
-
-const editedUserDataSchema = yup.object().shape({
-    password: yup.string().min(8).max(32).notRequired().matches(/^\w+$/),
-    role: yup.mixed().oneOf(ROLES_VALUES).notRequired(),
-});
 
 class UsersService {
     constructor(databaseService) {
         this.databaseService = databaseService;
     }
 
-    async createUser({
+    async createUserFromCredentials({
         username,
         password,
-        role,
     }) {
-        await this.validateUser({
-            username,
-            password,
-            role,
-        })
-
-        const userExists = await this.userExists(username);
-
-        if (userExists) {
+        const foundUser = await this.findUserByUsername(username);
+        if (foundUser) {
             throw new UserAlreadyExistsError(username);
         }
 
@@ -61,15 +33,10 @@ class UsersService {
         });
     }
 
-    async findUser({
+    async findUserByCredentials({
         username,
         password,
     }) {
-        await this.validateUser({
-            username,
-            password,
-        });
-
         const passwordHash = md5(password);
 
         return this.databaseService.findUserByCredentials({
@@ -79,8 +46,6 @@ class UsersService {
     }
 
     async editUser(user, currentUserRole) {
-        await this.validateUserEdit(user);
-
         const {
             username,
             password,
@@ -116,8 +81,6 @@ class UsersService {
     }
 
     async deleteUserByUsername(username, curentUserRole) {
-        await this.validateUsername({ username });
-
         const foundUser = await this.databaseService.findUserByUsername(username);
         if (!foundUser) {
             throw new UserNotFoundError(username);
@@ -133,64 +96,8 @@ class UsersService {
         return this.databaseService.deleteUserByUsername(username);
     }
 
-    async userExists(username) {
-        await this.validateUsername({ username });
-
-        const foundUser = await this.databaseService.findUserByUsername(username);
-
-        return !!foundUser;
-    }
-
-    async validateUser(user) {
-        await this.validateUsername(user);
-        await this.validateUserdata(user);
-    }
-
-    async validateUserEdit(user) {
-        await this.validateUsername(user);
-        await this.validateEditedUserdata(user);
-    }
-
-    async validateUsername(user) {
-        try {
-            await usernameSchema.validate(user);
-        } catch (error) {
-            if (error.path === 'username') {
-                throw new InvalidUsernameError(user.username);
-            } else {
-                throw error;
-            }
-        }
-    }
-
-    async validateUserdata(user) {
-        try {
-            await userDataSchema.validate(user);
-        } catch (error) {
-            if (error.path === 'role') {
-                throw new InvalidRoleError(user.role);
-            }
-            else if (error.path === 'password') {
-                throw new InvalidPasswordError(user.password);
-            } else {
-                throw error;
-            }
-        }
-    }
-
-    async validateEditedUserdata(user) {
-        try {
-            await editedUserDataSchema.validate(user);
-        } catch (error) {
-            if (error.path === 'role') {
-                throw new InvalidRoleError(user.role);
-            }
-            else if (error.path === 'password') {
-                throw new InvalidPasswordError(user.password);
-            } else {
-                throw error;
-            }
-        }
+    async findUserByUsername(username) {
+        return this.databaseService.findUserByUsername(username);
     }
 }
 

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 const config = require('config');
 
+const AccountValidator = require('../services/accounts/account-validator');
 
 const JWT_EXPIRY_TIME = config.get('jwtExpiryTime');
 
@@ -16,10 +17,14 @@ class AccountsController {
             password,
         } = req.body;
 
-        await this.accountsService.createAccount({
+        const newAccountCredentials = {
             username,
             password,
-        });
+        };
+
+        await AccountValidator.validateAccountCredentials(newAccountCredentials);
+
+        await this.accountsService.createAccount(newAccountCredentials);
 
         res.status(StatusCodes.OK).send(`User ${username} has been created.`);
     }
@@ -30,10 +35,14 @@ class AccountsController {
             password,
         } = req.body;
 
-        const account = await this.accountsService.validateAccount({
+        const accountCredentials = {
             username,
             password,
-        });
+        };
+
+        await AccountValidator.validateAccountCredentials(accountCredentials);
+
+        const account = await this.accountsService.verifyAccount(accountCredentials);
 
         const jwtToken = jwt.sign(
             this.extractTokenData(account),

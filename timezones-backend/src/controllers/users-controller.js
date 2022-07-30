@@ -1,5 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 
+const UserValidator = require('../services/users/user-validator');
+
 
 class UsersController {
     constructor(usersService) {
@@ -13,11 +15,15 @@ class UsersController {
             role,
         } = req.body;
 
-        await this.usersService.editUser({
+        const editedUser = {
             username,
             password,
             role,
-        }, req.user.role);
+        };
+
+        await UserValidator.validateEditedUser(editedUser);
+
+        await this.usersService.editUser(editedUser, req.user.role);
 
         res.status(StatusCodes.OK).send(`User ${username} succesfully edited.`);
     }
@@ -30,6 +36,8 @@ class UsersController {
 
     async deleteUser(req, res) {
         const { username } = req.body;
+
+        await UserValidator.validateUsername(username);
 
         await this.usersService.deleteUserByUsername(username, req.user.role);
 

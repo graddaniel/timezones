@@ -1,28 +1,11 @@
-const yup = require('yup');
 const config = require('config');
 
 const UserNotFoundError = require('../users/errors/user-not-found-error');
 const TimezoneNotFoundError = require('./errors/timezone-not-found-error');
-const InvalidTimezoneNameError = require('./errors/invalid-timezone-name-error');
-const InvalidTimezoneCityNameError = require('./errors/invalid-timezone-city-name-error');
-const InvalidTimezoneTimeDifferenceError = require('./errors/invalid-timezone-time-difference-error');
 
 const InsufficientPrivilegesError = require('../../generic-errors/insufficient-privileges-error');
 
 const ROLES = config.get('roles');
-const TIMEZONES = config.get('timezones');
-
-const timezoneSchema = yup.object().shape({
-    name: yup.string().min(1).max(32).required().matches(/^[A-Za-z0-9 ]+$/),
-    cityName: yup.string().min(1).max(32).required().matches(/^[A-Za-z ]+$/),
-    timeDifference: yup.mixed().oneOf(TIMEZONES).required(),
-});
-
-const editedTimezoneSchema = yup.object().shape({
-    name: yup.string().min(1).max(32).notRequired().matches(/^[A-Za-z0-9 ]+$/),
-    cityName: yup.string().min(1).max(32).notRequired().matches(/^[A-Za-z ]+$/),
-    timeDifference: yup.mixed().oneOf(TIMEZONES).notRequired(),
-});
 
 class TimezonesService {
     constructor(
@@ -42,12 +25,6 @@ class TimezonesService {
         },
         currentUser
     ) {
-        await this.validateTimezone({
-            name,
-            cityName,
-            timeDifference,
-        });
-
         if (
             currentUser.role !== ROLES.admin &&
             username !== currentUser.username
@@ -55,8 +32,8 @@ class TimezonesService {
             throw new InsufficientPrivilegesError();
         }
 
-        const userExists = await this.usersService.userExists(username);
-        if (!userExists) {
+        const foundUser = await this.usersService.findUserByUsername(username);
+        if (!foundUser) {
             throw new UserNotFoundError(username);
         }
 
@@ -73,8 +50,6 @@ class TimezonesService {
         timezone,
         currentUser,
     ) {
-        await this.validateEditedTimezone(timezone);
-
         const {
             username,
         } = timezone;
@@ -93,8 +68,8 @@ class TimezonesService {
             throw new InsufficientPrivilegesError();
         }
 
-        const userExists = await this.usersService.userExists(username);
-        if (!userExists) {
+        const foundUser = await this.usersService.findUserByUsername(username);
+        if (!foundUser) {
             throw new UserNotFoundError(username);
         }
 
@@ -133,44 +108,6 @@ class TimezonesService {
         }
 
         return this.databaseService.findTimezonesByUsername(username);
-    }
-
-    async validateTimezone(timezone) {
-        try {
-            await timezoneSchema.validate(timezone);
-        } catch (error) {
-            if (error.path === 'name') {
-                throw new InvalidTimezoneNameError(timezone.name);
-            }
-            else if (error.path === 'cityName') {
-                throw new InvalidTimezoneCityNameError(timezone.cityName);
-            }
-            else if(error.path === 'timeDifference') {
-                throw new InvalidTimezoneTimeDifferenceError(timezone.timeDifference);
-            }
-            else {
-                throw error;
-            }
-        }
-    }
-
-    async validateEditedTimezone(timezone) {
-        try {
-            await editedTimezoneSchema.validate(timezone);
-        } catch (error) {
-            if (error.path === 'name') {
-                throw new InvalidTimezoneNameError(user.role);
-            }
-            else if (error.path === 'cityName') {
-                throw new InvalidTimezoneCityNameError(user.password);
-            }
-            else if(error.path === 'timezone') {
-                throw new InvalidTimezoneTimeDifferenceError(user.password);
-            }
-            else {
-                throw error;
-            }
-        }
     }
 }
 
