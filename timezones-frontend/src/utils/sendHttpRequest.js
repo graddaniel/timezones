@@ -1,3 +1,12 @@
+import config from '../config.json';
+
+const {
+    api: {
+      host: HOST,
+      port: PORT
+    }
+} = config;
+
 const sendHttpRequest = async ({
     data,
     urlParams,
@@ -38,7 +47,7 @@ const sendHttpRequest = async ({
     }
 
     const response = await fetch(
-        `http://0.0.0.0:8080${endpoint}${urlParamsString}`,
+        `http://${HOST}:${PORT}${endpoint}${urlParamsString}`,
         options
     );
 
