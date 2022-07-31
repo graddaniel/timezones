@@ -7,11 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import UsersPageComponent from '../components/UsersPage';
 import sendHttpRequest from '../utils/sendHttpRequest';
 
+import useRole from '../hooks/useRole';
+
+
 const UsersPageContainer = () => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ currentlyEditedUsername, setCurrentlyEditedUsername ] = useState(false);
     const [ usersList, setUsersList ] = useState([]);
     const navigate = useNavigate();
+    const currentUserRole = useRole();
 
     useEffect(() => {
         getUsersList();
@@ -118,6 +122,7 @@ const UsersPageContainer = () => {
                 setCurrentlyEditedUsername(null);
             }}
             discardUserChanges={() => setCurrentlyEditedUsername(null)}
+            currentUserRole={currentUserRole}
         />
     );
 }

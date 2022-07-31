@@ -21,7 +21,10 @@ import { Typography } from "@mui/material";
 import EditableUserRow from '../containers/EditableUserRow';
 import config from '../config.json';
 
-const ROLES_VALUES = Object.values(config.roles);
+const {
+    roles: ROLES,
+} = config;
+const ROLES_VALUES = Object.values(ROLES);
 
 const Wrapper = styled('article')({
     height: '90%',
@@ -36,8 +39,9 @@ const UsersPageComponent = ({
     editUser,
     submitUserChanges,
     discardUserChanges,
+    currentUserRole,
 }) => {
-    const [ role, setRole ] = useState(config.roles.user);
+    const [ role, setRole ] = useState(ROLES.user);
     return (
         <Wrapper>
             <Typography
@@ -58,9 +62,11 @@ const UsersPageComponent = ({
                                 <TableCell>
                                     Password
                                 </TableCell>
-                                <TableCell>
-                                    Role
-                                </TableCell>
+                                {currentUserRole === ROLES.admin && (
+                                    <TableCell>
+                                        Role
+                                    </TableCell>
+                                )}
                                 <TableCell>
                                     Operation
                                 </TableCell>
@@ -84,31 +90,33 @@ const UsersPageComponent = ({
                                         variant="standard"
                                     />
                                 </TableCell>
-                                <TableCell>
-                                    <FormControl fullWidth variant="standard">
-                                        <InputLabel id="roleLabel">
-                                            Role
-                                        </InputLabel>
-                                        <Select
-                                            required
-                                            inputProps={{
-                                                id: "role"
-                                            }}
-                                            labelId="roleLabel"
-                                            value={role}
-                                            onChange={event => setRole(event.target.value)}
-                                        >
-                                            {ROLES_VALUES.map(roleValue => (
-                                                <MenuItem
-                                                    value={roleValue}
-                                                    key={roleValue}
-                                                >
-                                                    {roleValue}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </TableCell>
+                                {currentUserRole === ROLES.admin && (
+                                    <TableCell>
+                                        <FormControl fullWidth variant="standard">
+                                            <InputLabel id="roleLabel">
+                                                Role
+                                            </InputLabel>
+                                            <Select
+                                                required
+                                                inputProps={{
+                                                    id: "role"
+                                                }}
+                                                labelId="roleLabel"
+                                                value={role}
+                                                onChange={event => setRole(event.target.value)}
+                                            >
+                                                {ROLES_VALUES.map(roleValue => (
+                                                    <MenuItem
+                                                        value={roleValue}
+                                                        key={roleValue}
+                                                    >
+                                                        {roleValue}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </TableCell>
+                                )}
                                 <TableCell>
                                     <LoadingButton
                                         size="small"
@@ -128,6 +136,7 @@ const UsersPageComponent = ({
                                             user={user}
                                             submitUserChanges={submitUserChanges}
                                             discardUserChanges={discardUserChanges}
+                                            currentUserRole={currentUserRole}
                                         />
                                     )}
                                     {user.username !== currentlyEditedUsername && (
@@ -138,9 +147,11 @@ const UsersPageComponent = ({
                                             <TableCell>
                                                 {user.password}
                                             </TableCell>
-                                            <TableCell>
-                                                {user.role}
-                                            </TableCell>
+                                            {currentUserRole === ROLES.admin && (
+                                                <TableCell>
+                                                    {user.role}
+                                                </TableCell>
+                                            )}
                                             <TableCell>                                            
                                                 <LoadingButton
                                                     size="small"
