@@ -11,10 +11,12 @@ const TimezonesPageContainer = () => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ currentlyEditedTimezoneId, setCurrentlyEditedTimezoneId ] = useState(false);
     const [ timezonesList, setTimezonesList ] = useState([]);
+    const [ usernames, setUsernames ] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         getTimezonesList();
+        getUsernames();
     }, []);
 
     const getTimezonesList = async () => {
@@ -26,6 +28,22 @@ const TimezonesPageContainer = () => {
             }, navigate);
 
             setTimezonesList(response);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const getUsernames = async () => {
+        setIsLoading(true);
+
+        try {
+            const response = await sendHttpRequest({
+                endpoint: '/user/names',
+            }, navigate);
+
+            setUsernames(response);
         } catch (error) {
             console.error(error);
         } finally {
@@ -120,6 +138,7 @@ const TimezonesPageContainer = () => {
                 setCurrentlyEditedTimezoneId(null);
             }}
             discardTimezoneChanges={() => setCurrentlyEditedTimezoneId(null)}
+            usernames={usernames}
         />
     );
 }

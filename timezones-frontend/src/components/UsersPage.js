@@ -79,7 +79,7 @@ const UsersPageComponent = ({
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <FormControl variant="standard">
+                                    <FormControl fullWidth variant="standard">
                                         <InputLabel id="roleLabel">
                                             Role
                                         </InputLabel>

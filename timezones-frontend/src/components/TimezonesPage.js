@@ -35,8 +35,11 @@ const TimezonesPageComponent = ({
     editTimezone,
     submitTimezoneChanges,
     discardTimezoneChanges,
+    usernames,
 }) => {
-    const [ timeDifference, setTimeDifference ] = useState('+0:00');
+    const [ timeDifference, setTimeDifference ] = useState('');
+    const [ username, setUsername ] = useState('');
+
     return (
         <Wrapper>
             <form onSubmit={addNewTimezone}>
@@ -82,7 +85,7 @@ const TimezonesPageComponent = ({
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <FormControl variant="standard">
+                                    <FormControl fullWidth variant="standard">
                                         <InputLabel id="timeDifferenceLabel">
                                             Time Difference
                                         </InputLabel>
@@ -107,12 +110,29 @@ const TimezonesPageComponent = ({
                                     </FormControl>
                                 </TableCell>
                                 <TableCell>
-                                    <TextField
-                                        required
-                                        id="username"
-                                        label="Username"
-                                        variant="standard"
-                                    />
+                                    <FormControl fullWidth variant="standard">
+                                        <InputLabel id="usernameLabel">
+                                            Username
+                                        </InputLabel>
+                                        <Select
+                                            required
+                                            inputProps={{
+                                                id: "username"
+                                            }}
+                                            labelId="usernameLabel"
+                                            value={username}
+                                            onChange={event => setUsername(event.target.value)}
+                                        >
+                                            {usernames.map(username => (
+                                                <MenuItem
+                                                    value={username}
+                                                    key={username}
+                                                >
+                                                    {username}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </TableCell>
                                 <TableCell>
                                     <LoadingButton
@@ -133,6 +153,7 @@ const TimezonesPageComponent = ({
                                             timezone={timezone}
                                             submitTimezoneChanges={submitTimezoneChanges}
                                             discardTimezoneChanges={discardTimezoneChanges}
+                                            usernames={usernames}
                                         />
                                     )}
                                     {timezone.id !== currentlyEditedTimezoneId && (
