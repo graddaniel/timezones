@@ -17,6 +17,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { Typography } from "@mui/material";
 
 import EditableTimezoneRow from '../containers/EditableTimezoneRow';
 import config from '../config.json';
@@ -48,6 +49,11 @@ const TimezonesPageComponent = ({
 
     return (
         <Wrapper>
+            <Typography
+                variant="h3"
+            >
+                Timezones
+            </Typography>
             <form onSubmit={addNewTimezone}>
                 <TableContainer
                     component={Paper}

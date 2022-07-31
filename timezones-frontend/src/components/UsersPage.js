@@ -16,6 +16,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { Typography } from "@mui/material";
 
 import EditableUserRow from '../containers/EditableUserRow';
 import config from '../config.json';
@@ -39,6 +40,11 @@ const UsersPageComponent = ({
     const [ role, setRole ] = useState(config.roles.user);
     return (
         <Wrapper>
+            <Typography
+                variant="h3"
+            >
+                Users
+            </Typography>
             <form onSubmit={addNewUser}>
                 <TableContainer
                     component={Paper}

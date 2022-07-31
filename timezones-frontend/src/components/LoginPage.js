@@ -5,7 +5,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Alert from '@mui/material/Alert';
 
 
-const LoginPageComponent = ({
+const LoginPage = ({
     isLoading,
     error,
     login,
@@ -47,4 +47,4 @@ const LoginPageComponent = ({
     );
 };
 
-export default LoginPageComponent;
+export default LoginPage;

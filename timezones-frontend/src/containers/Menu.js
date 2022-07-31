@@ -84,11 +84,13 @@ const MenuContainer = () => {
                         Users panel
                     </MenuItem>
                 )}
-                <MenuItem
-                    onClick={logout}
-                >
-                    Logout
-                </MenuItem>
+                {currentUsersRole !== null && (
+                    <MenuItem
+                        onClick={logout}
+                    >
+                        Logout
+                    </MenuItem>
+                )}
             </Menu>
             </div>
     );
