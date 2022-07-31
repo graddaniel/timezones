@@ -12,7 +12,7 @@ module.exports = function extractUserFromJWT(req, res, next) {
         return;
     }
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (error, user) => {
+    jwt.verify(token, process.env.JWT_TOKEN_SECRET, (error, user) => {
         if (error) {
             res.status(StatusCodes.UNAUTHORIZED).send(error);
             return;
