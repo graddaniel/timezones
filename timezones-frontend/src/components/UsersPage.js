@@ -17,6 +17,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { Typography } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import EditableUserRow from '../containers/EditableUserRow';
 import config from '../config.json';
@@ -40,8 +43,11 @@ const UsersPageComponent = ({
     submitUserChanges,
     discardUserChanges,
     currentUserRole,
+    error,
+    closeError,
 }) => {
     const [ role, setRole ] = useState(ROLES.user);
+
     return (
         <Wrapper>
             <Typography
@@ -49,6 +55,24 @@ const UsersPageComponent = ({
             >
                 Users
             </Typography>
+            {error && (
+                <Alert
+                    severity="error"
+                    action={
+                        <IconButton
+                          aria-label="close"
+                          color="inherit"
+                          size="small"
+                          onClick={closeError}
+                        >
+                          <CloseIcon fontSize="inherit" />
+                        </IconButton>
+                      }
+                      sx={{ mb: 2 }}
+                >
+                    {error}
+                </Alert>
+            )}
             <form onSubmit={addNewUser}>
                 <TableContainer
                     component={Paper}

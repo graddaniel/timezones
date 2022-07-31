@@ -14,6 +14,7 @@ const UsersPageContainer = () => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ currentlyEditedUsername, setCurrentlyEditedUsername ] = useState(false);
     const [ usersList, setUsersList ] = useState([]);
+    const [ error, setError ] = useState();
     const navigate = useNavigate();
     const currentUserRole = useRole();
 
@@ -30,8 +31,9 @@ const UsersPageContainer = () => {
             }, navigate);
 
             setUsersList(response);
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -61,8 +63,9 @@ const UsersPageContainer = () => {
             }, navigate);
 
             getUsersList();
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -80,8 +83,9 @@ const UsersPageContainer = () => {
             }, navigate);
 
             getUsersList();
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -101,8 +105,9 @@ const UsersPageContainer = () => {
             }, navigate);
 
             getUsersList();
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -122,6 +127,8 @@ const UsersPageContainer = () => {
             }}
             discardUserChanges={() => setCurrentlyEditedUsername(null)}
             currentUserRole={currentUserRole}
+            error={error}
+            closeError={() => setError(null)}
         />
     );
 }
