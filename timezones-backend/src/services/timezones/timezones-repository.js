@@ -7,28 +7,50 @@ class TimezonesRepository {
         this.databaseService = databaseService;
     }
 
-    createTimezone(timezone) {
+    mapTimezoneDocumentToTimezone(timezone) {
+        if (!timezone) {
+            return timezone;
+        }
+
+        return {
+            id: timezone._id,
+            name: timezone.name,
+            cityName: timezone.cityName,
+            timeDifference: timezone.timeDifference,
+            username: timezone.username,
+        };
+    }
+
+    async createTimezone(timezone) {
         const Timezone = mongoose.model('timezone', TimezoneSchema);
 
-        return this.databaseService.create(Timezone, timezone);
+        const timezoneDocument = await this.databaseService.create(Timezone, timezone);
+
+        return this.mapTimezoneDocumentToTimezone(timezoneDocument);
     }
 
     async findTimezone(conditions) {
         const Timezone = mongoose.model('timezone', TimezoneSchema);
 
-        return this.databaseService.findOne(Timezone, conditions);
+        const foundTimezoneDocument = await this.databaseService.findOne(Timezone, conditions);
+
+        return this.mapTimezoneDocumentToTimezone(foundTimezoneDocument);
     }
 
     async updateTimezone(conditions, newTimezoneData) {
         const Timezone = mongoose.model('timezone', TimezoneSchema);
 
-        return this.databaseService.findOneAndUpdate(Timezone, conditions, newTimezoneData);
+        const updatedTimezoneDocument = await this.databaseService.findOneAndUpdate(Timezone, conditions, newTimezoneData);
+
+        return this.mapTimezoneDocumentToTimezone(updatedTimezoneDocument);
     }
 
-    findTimezones(conditions) {
+    async findTimezones(conditions) {
         const Timezone = mongoose.model('timezone', TimezoneSchema);
 
-        return this.databaseService.find(Timezone, conditions);
+        const timezones = await this.databaseService.find(Timezone, conditions);
+
+        return timezones.map(this.mapTimezoneDocumentToTimezone);
     }
 
     deleteTimezone(conditions) {

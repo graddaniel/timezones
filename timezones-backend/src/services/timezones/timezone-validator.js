@@ -44,13 +44,13 @@ class TimezoneValidator {
             await editedTimezoneSchema.validate(timezone);
         } catch (error) {
             if (error.path === 'name') {
-                throw new InvalidTimezoneNameError(user.role);
+                throw new InvalidTimezoneNameError(timezone.name);
             }
             else if (error.path === 'cityName') {
-                throw new InvalidTimezoneCityNameError(user.password);
+                throw new InvalidTimezoneCityNameError(timezone.cityName);
             }
-            else if(error.path === 'timezone') {
-                throw new InvalidTimezoneTimeDifferenceError(user.password);
+            else if(error.path === 'timeDifference') {
+                throw new InvalidTimezoneTimeDifferenceError(timezone.timeDifference);
             }
             else {
                 throw error;

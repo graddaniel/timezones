@@ -58,7 +58,7 @@ class TimezonesController {
     async deleteTimezone(req, res) {
         const {
             id,
-        } = req.body;
+        } = req.query;
 
         await this.timezonesService.deleteTimezoneById(id, req.user);
 
