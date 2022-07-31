@@ -5,7 +5,14 @@ import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
+import config from '../config.json';
+
+const ROLES_VALUES = Object.values(config.roles);
 
 const EditableUserRow = ({
     isLoading,
@@ -32,14 +39,29 @@ const EditableUserRow = ({
                 />
             </TableCell>
             <TableCell>
-                <TextField
-                    required
-                    id="role"
-                    label="Role"
-                    variant="standard"
-                    value={role}
-                    onChange={event => setRole(event.target.value)}
-                />
+                <FormControl variant="standard">
+                    <InputLabel id="roleLabel">
+                        Role
+                    </InputLabel>
+                    <Select
+                        required
+                        inputProps={{
+                            id: "role"
+                        }}
+                        labelId="roleLabel"
+                        value={role}
+                        onChange={event => setRole(event.target.value)}
+                    >
+                        {ROLES_VALUES.map(roleValue => (
+                            <MenuItem
+                                value={roleValue}
+                                key={roleValue}
+                            >
+                                {roleValue}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </TableCell>
             <TableCell>
                 <LoadingButton

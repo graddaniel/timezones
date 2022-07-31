@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Paper from '@mui/material/Paper';
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
@@ -12,8 +12,15 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { styled } from '@mui/system';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 import EditableUserRow from '../containers/EditableUserRow';
+import config from '../config.json';
+
+const ROLES_VALUES = Object.values(config.roles);
 
 const Wrapper = styled('article')({
     height: '90%',
@@ -29,6 +36,7 @@ const UsersPageComponent = ({
     submitUserChanges,
     discardUserChanges,
 }) => {
+    const [ role, setRole ] = useState(config.roles.user);
     return (
         <Wrapper>
             <form onSubmit={addNewUser}>
@@ -71,12 +79,29 @@ const UsersPageComponent = ({
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <TextField
-                                        required
-                                        id="role"
-                                        label="Role"
-                                        variant="standard"
-                                    />
+                                    <FormControl variant="standard">
+                                        <InputLabel id="roleLabel">
+                                            Role
+                                        </InputLabel>
+                                        <Select
+                                            required
+                                            inputProps={{
+                                                id: "role"
+                                            }}
+                                            labelId="roleLabel"
+                                            value={role}
+                                            onChange={event => setRole(event.target.value)}
+                                        >
+                                            {ROLES_VALUES.map(roleValue => (
+                                                <MenuItem
+                                                    value={roleValue}
+                                                    key={roleValue}
+                                                >
+                                                    {roleValue}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </TableCell>
                                 <TableCell>
                                     <LoadingButton
