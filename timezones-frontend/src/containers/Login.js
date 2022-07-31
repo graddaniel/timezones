@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import decodeJwt from 'jwt-decode';
 
 import LoginComponent from '../components/Login';
 import sendHttpRequest from '../utils/sendHttpRequest';
@@ -35,11 +34,7 @@ const LoginContainer = () => {
 
             localStorage.setItem('accessToken', token);
             
-            const decodedToken = decodeJwt(token);
-
-            decodedToken.role === 'userManager' ?
-                navigate('/users') :
-                navigate('/timezones');
+            navigate('/');
         } catch (error) {
             setError(error.message);
         } finally {

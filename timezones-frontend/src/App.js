@@ -1,28 +1,52 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import RequireAuthorization from './components/hoc/RequireAuthorization';
 
 import Menu from './containers/Menu';
 import Login from './containers/Login';
+import Register from './containers/Register';
 
 import Forbidden403 from './components/status-pages/403';
 import NotFound404 from './components/status-pages/404';
 
 import './App.css';
+import React from 'react';
+import useRole from './hooks/useRole';
 
+import config from './config.json';
+
+const {
+  roles: {
+    user: USER,
+    userManager: USER_MANAGER,
+    admin: ADMIN,
+  }
+} = config;
 
 function App() {
-  const location = useLocation();
+  console.log(config)
+  const role = useRole();
+
+  const generateMainPageRedirection = () => {
+    switch(role) {
+      case USER:
+        return <Navigate to="/timezones" />;
+      case USER_MANAGER:
+      case ADMIN:
+        return <Navigate to="/users" />;
+      default:
+        return <Navigate to="/login" />;
+    }
+  } 
 
   return (
-    <div className="App">
-      {location.pathname !== "/login" && (
-        <Menu />
-      )}
+    <React.Fragment>
+      <Menu />
+      <div className="App">
       <Routes>
         <Route
           path="/"
-          element={<div>TODO ADD</div>}
+          element={generateMainPageRedirection()}
         />
         <Route
           path="/login"
@@ -30,12 +54,12 @@ function App() {
         />
         <Route
           path="/register"
-          element={<div>register</div>}
+          element={<Register />}
         />
         <Route
           path="/timezones"
           element={
-            <RequireAuthorization requiredRoles={['user', 'admin']}>
+            <RequireAuthorization requiredRoles={[USER, ADMIN]}>
               <div>Timezones</div>
             </RequireAuthorization>
           }
@@ -43,7 +67,7 @@ function App() {
         <Route
           path="/users"
           element={
-            <RequireAuthorization requiredRoles={['userManager', 'admin']}>
+            <RequireAuthorization requiredRoles={[USER_MANAGER, ADMIN]}>
               <div>Users</div>
             </RequireAuthorization>
           }
@@ -62,6 +86,7 @@ function App() {
         />
       </Routes>
     </div>
+    </React.Fragment>
   );
 }
 

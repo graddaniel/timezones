@@ -3,7 +3,17 @@ import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+
 import useRole from '../hooks/useRole';
+import config from '../config.json';
+
+const {
+  roles: {
+    user: USER,
+    userManager: USER_MANAGER,
+    admin: ADMIN,
+  }
+} = config;
 
 const MenuContainer = () => {
     const [ anchorEl, setAnchorEl ] = useState(null);
@@ -44,19 +54,28 @@ const MenuContainer = () => {
                 'aria-labelledby': 'basic-button',
                 }}
             >
-                <MenuItem
-                    onClick={() => navigate('/')}
-                >
-                    Main page
-                </MenuItem>
-                {['user', 'admin'].includes(currentUsersRole) && (
+                {currentUsersRole === null && (
+                    <MenuItem
+                        onClick={() => navigate('/login')}
+                    >
+                        Login
+                    </MenuItem>
+                )}
+                {currentUsersRole === null && (
+                    <MenuItem
+                        onClick={() => navigate('/register')}
+                    >
+                        Register
+                    </MenuItem>
+                )}
+                {[USER, ADMIN].includes(currentUsersRole) && (
                     <MenuItem
                         onClick={() => navigate('/timezones')}
                     >
                         Timezones panel
                     </MenuItem>
                 )}
-                {['userManager', 'admin'].includes(currentUsersRole) && (
+                {[USER_MANAGER, ADMIN].includes(currentUsersRole) && (
                     <MenuItem
                         onClick={() => navigate('/users')}
                     >
