@@ -15,25 +15,36 @@ class UsersService {
         this.usersRepository = usersRepository;
     }
 
-    async createUserFromCredentials(credentials) {
+    async createUser(user, currentUserRole = null) {
         const {
             username,
             password,
-        } = credentials;
+            role,
+        } = user;
 
-        const foundUser = await this.findUser({
-            username,
-            password,
-        });
-        if (foundUser) {
-            throw new UserAlreadyExistsError(username);
+            if (
+            (
+                role === ROLES.admin ||
+                role === ROLES.userManager
+            ) &&
+            currentUserRole !== ROLES.admin
+        ) {
+            throw new InsufficientPrivilegesError();
         }
 
         const passwordHash = md5(password);
 
+        const foundUser = await this.usersRepository.findUser({
+            username,
+        });
+        if (foundUser) {
+            throw new UserAlreadyExistsError(username);
+        }        
+
         return this.usersRepository.createUser({
             username,
             password: passwordHash,
+            role,
         });
     }
 
@@ -81,7 +92,7 @@ class UsersService {
         );
     }
 
-    async getAll() {
+    async getUsers() {
         //TODO Pagination
         return this.usersRepository.findUsers({});
     }

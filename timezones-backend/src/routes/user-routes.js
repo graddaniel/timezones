@@ -16,8 +16,9 @@ class UserRoutes {
         router.use(extractUserFromJWT);
         router.use(allow([USER_MANAGER, ADMIN]));
 
+        router.post('/add', wrap(usersController.addUser.bind(usersController)));
         router.patch('/edit', wrap(usersController.editUser.bind(usersController)));
-        router.get('/listAll', wrap(usersController.listAllUsers.bind(usersController)));
+        router.get('/list', wrap(usersController.listUsers.bind(usersController)));
         router.delete('/delete', wrap(usersController.deleteUser.bind(usersController)));
 
         this.router = router;

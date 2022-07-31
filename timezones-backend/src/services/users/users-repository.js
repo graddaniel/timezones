@@ -7,28 +7,49 @@ class UsersRepository {
         this.databaseService = databaseService;
     }
 
-    createUser(user) {
-        const User = mongoose.model('user', UserSchema);
+    mapUserDocumentToUser(userDocument) {
+        if (!userDocument) {
+            return userDocument;
+        }
 
-        return this.databaseService.create(User, user);
+        return {
+            id: userDocument._id,
+            username: userDocument.username,
+            password: userDocument.password,
+            role: userDocument.role,
+        };
     }
 
-    findUser(user) {
+    async createUser(user) {
         const User = mongoose.model('user', UserSchema);
 
-        return this.databaseService.findOne(User, user);
+        const userDocument = await this.databaseService.create(User, user);
+
+        return this.mapUserDocumentToUser(userDocument);
+    }
+
+    async findUser(user) {
+        const User = mongoose.model('user', UserSchema);
+
+        const foundUserDocument = await this.databaseService.findOne(User, user);
+
+        return this.mapUserDocumentToUser(foundUserDocument);
     }
 
     async updateUser(conditions, newUserData) {
         const User = mongoose.model('user', UserSchema);
 
-        return this.databaseService.findOneAndUpdate(User, conditions, newUserData);
+        const updatedUserDocument = await this.databaseService.findOneAndUpdate(User, conditions, newUserData);
+
+        return this.mapUserDocumentToUser(updatedUserDocument);
     }
 
-    findUsers(conditions) {
+    async findUsers(conditions) {
         const User = mongoose.model('user', UserSchema);
 
-        return this.databaseService.find(User, conditions);
+        const userDocuments = await this.databaseService.find(User, conditions);
+
+        return userDocuments.map(this.mapUserDocumentToUser);
     }
 
     deleteUser(conditions) {

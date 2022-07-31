@@ -10,7 +10,7 @@ class AccountsService {
         username,
         password,
     }) {
-        await this.usersService.createUserFromCredentials({
+        await this.usersService.createUser({
             username,
             password,
         });

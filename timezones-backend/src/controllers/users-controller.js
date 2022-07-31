@@ -8,6 +8,26 @@ class UsersController {
         this.usersService = usersService;
     }
 
+    async addUser(req, res) {
+        const {
+            username,
+            password,
+            role,
+        } = req.body;
+
+        const newUser = {
+            username,
+            password,
+            role,
+        };
+
+        await UserValidator.validateNewUser(newUser);
+
+        await this.usersService.createUser(newUser, req.user.role);
+
+        res.status(StatusCodes.OK).send(`User ${username} succesfully added.`);
+    }
+
     async editUser(req, res) {
         const {
             username,
@@ -28,14 +48,14 @@ class UsersController {
         res.status(StatusCodes.OK).send(`User ${username} succesfully edited.`);
     }
 
-    async listAllUsers(req, res) {
-        const users = await this.usersService.getAll();
+    async listUsers(req, res) {
+        const users = await this.usersService.getUsers();
 
         res.status(StatusCodes.OK).json(users);
     }
 
     async deleteUser(req, res) {
-        const { username } = req.body;
+        const { username } = req.query;
 
         await UserValidator.validateUsername(username);
 

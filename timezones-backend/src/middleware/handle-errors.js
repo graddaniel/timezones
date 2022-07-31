@@ -13,7 +13,6 @@ const InvalidTimezoneNameError = require('../services/timezones/errors/invalid-t
 const InvalidTimezoneCityNameError = require('../services/timezones/errors/invalid-timezone-city-name-error');
 const InvalidTimezoneTimeDifferenceError = require('../services/timezones/errors/invalid-timezone-time-difference-error');
 
-
 const InsufficientPrivilegesError = require('../generic-errors/insufficient-privileges-error');
 
 
@@ -24,23 +23,40 @@ module.exports = function handleErrors(err, req, res, next) {
 
     console.log("handleErrors", JSON.stringify(err), err.message, err.constructor);
 
+    let httpCode = null;
+    let message = "";
+
     switch(err.constructor) {
         case UserAlreadyExistsError:
-            return res.status(StatusCodes.CONFLICT).send(err.message);
+            httpCode = StatusCodes.CONFLICT;
+            message = err.message;
+            break;
         case AccountCredentialsNotFound:
         case TimezoneNotFoundError:
         case UserNotFoundError:
-            return res.status(StatusCodes.NOT_FOUND).send(err.message);;
+            httpCode = StatusCodes.NOT_FOUND;
+            message = err.message;
+            break;
         case InvalidUsernameError:
         case InvalidPasswordError:
         case InvalidRoleError:
         case InvalidTimezoneNameError:
         case InvalidTimezoneCityNameError:
         case InvalidTimezoneTimeDifferenceError:
-            return res.status(StatusCodes.BAD_REQUEST).send(err.message);;
+            httpCode = StatusCodes.BAD_REQUEST;
+            message = err.message;
+            break;
         case InsufficientPrivilegesError:
-            return res.status(StatusCodes.FORBIDDEN).send('Insufficient privileges');
+            httpCode = StatusCodes.FORBIDDEN;
+            message = 'Insufficient privileges';
+            break;
         default:
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Unexpected error.");
+            httpCode = StatusCodes.INTERNAL_SERVER_ERROR;
+            message = 'Unexpected error';
+            break;
     }
+
+    return res.status(httpCode).json({
+        message
+    });
 }
