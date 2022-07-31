@@ -97,6 +97,12 @@ class UsersService {
         return this.usersRepository.findUsers({});
     }
 
+    async getAllUsernames() {
+        const users = await this.usersRepository.findUsers({}, { username: 1 });
+
+        return users.map(user => user.username);
+    }
+
     async deleteUserByUsername(username, curentUserRole) {
         const foundUser = await this.usersRepository.findUser({ username });
         if (!foundUser) {

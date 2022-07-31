@@ -54,6 +54,12 @@ class UsersController {
         res.status(StatusCodes.OK).json(users);
     }
 
+    async getAllUsernames(req, res) {
+        const usernames = await this.usersService.getAllUsernames();
+
+        res.status(StatusCodes.OK).json(usernames);
+    }
+
     async deleteUser(req, res) {
         const { username } = req.query;
 

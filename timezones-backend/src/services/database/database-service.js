@@ -25,8 +25,8 @@ class DatabaseService {
         return model.create(docs);
     }
 
-    find(model, conditions = {}) {
-        return model.find(conditions);
+    find(model, conditions = {}, projection = {}) {
+        return model.find(conditions, projection);
     }
 
     findOne(model, conditions = {}) {

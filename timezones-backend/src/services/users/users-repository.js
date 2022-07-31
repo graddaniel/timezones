@@ -44,10 +44,10 @@ class UsersRepository {
         return this.mapUserDocumentToUser(updatedUserDocument);
     }
 
-    async findUsers(conditions) {
+    async findUsers(conditions, projection) {
         const User = mongoose.model('user', UserSchema);
 
-        const userDocuments = await this.databaseService.find(User, conditions);
+        const userDocuments = await this.databaseService.find(User, conditions, projection);
 
         return userDocuments.map(this.mapUserDocumentToUser);
     }
