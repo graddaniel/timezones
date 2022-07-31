@@ -43,9 +43,163 @@ const TimezonesPageComponent = ({
     displayTimezone,
     usernames,
     currentUserRole,
+    filterTimezonesByName,
 }) => {
     const [ timeDifference, setTimeDifference ] = useState('');
     const [ username, setUsername ] = useState('');
+    const [ filterValue, setFilterValue ] = useState('');
+
+    const tableHeader = (
+        <TableHead>
+            <TableRow>
+                <TableCell>
+                    Name
+                </TableCell>
+                <TableCell>
+                    City Name
+                </TableCell>
+                <TableCell>
+                    Time Difference
+                </TableCell>
+                {currentUserRole === ROLES.admin && (
+                    <TableCell>
+                        Username
+                    </TableCell>
+                )}
+                <TableCell>
+                    Operation
+                </TableCell>
+            </TableRow>
+        </TableHead>
+    );
+
+    const newEntryRow = (
+        <TableRow>
+            <TableCell>
+                <TextField
+                    required
+                    id="name"
+                    label="Name"
+                    variant="standard"
+                />
+            </TableCell>
+            <TableCell>
+                <TextField
+                    required
+                    id="cityName"
+                    label="City Name"
+                    variant="standard"
+                />
+            </TableCell>
+            <TableCell>
+                <FormControl fullWidth variant="standard">
+                    <InputLabel id="timeDifferenceLabel">
+                        Time Difference
+                    </InputLabel>
+                    <Select
+                        required
+                        inputProps={{
+                            id: "timeDifference"
+                        }}
+                        labelId="timeDifferenceLabel"
+                        value={timeDifference}
+                        onChange={event => setTimeDifference(event.target.value)}
+                    >
+                        {TIMEZONES.map(timezone => (
+                            <MenuItem
+                                value={timezone}
+                                key={timezone}
+                            >
+                                {timezone}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </TableCell>
+            {currentUserRole === ROLES.admin && (
+                <TableCell>
+                    <FormControl fullWidth variant="standard">
+                        <InputLabel id="usernameLabel">
+                            Username
+                        </InputLabel>
+                        <Select
+                            required
+                            inputProps={{
+                                id: "username"
+                            }}
+                            labelId="usernameLabel"
+                            value={username}
+                            onChange={event => setUsername(event.target.value)}
+                        >
+                            {usernames.map(username => (
+                                <MenuItem
+                                    value={username}
+                                    key={username}
+                                >
+                                    {username}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </TableCell>
+            )}
+            <TableCell>
+                <LoadingButton
+                    size="small"
+                    type="submit"
+                    loading={isLoading}
+                    variant="text"
+                >
+                    <AddIcon />
+                </LoadingButton>
+            </TableCell>
+        </TableRow>
+    );
+
+    const generateDisplayRow = (timezone) => (
+        <TableRow key={timezone.id}>
+            <TableCell>
+                {timezone.name}
+            </TableCell>
+            <TableCell>
+                {timezone.cityName}
+            </TableCell>
+            <TableCell>
+                {timezone.timeDifference}
+            </TableCell>
+            {currentUserRole === ROLES.admin && (
+                <TableCell>
+                    {timezone.username}
+                </TableCell>
+            )}
+            <TableCell>                                            
+                <LoadingButton
+                    size="small"
+                    loading={isLoading}
+                    variant="text"
+                    onClick={() => deleteTimezone(timezone.id)}
+                >
+                    <RemoveIcon />
+                </LoadingButton>
+                <LoadingButton
+                    size="small"
+                    loading={isLoading}
+                    variant="text"
+                    onClick={() => editTimezone(timezone.id)}
+                >
+                    <EditIcon />
+                </LoadingButton>
+                <LoadingButton
+                    size="small"
+                    loading={isLoading}
+                    variant="text"
+                    onClick={() => displayTimezone(timezone.id)}
+                >
+                    <PageviewIcon />
+                </LoadingButton>
+            </TableCell>
+        </TableRow>
+    )
 
     return (
         <Wrapper>
@@ -54,113 +208,24 @@ const TimezonesPageComponent = ({
             >
                 Timezones
             </Typography>
+            <TextField
+                id="nameFilter"
+                label="Filter by name"
+                type="search"
+                value={filterValue}
+                onChange={event => {
+                    setFilterValue(event.target.value);
+                    filterTimezonesByName(event.target.value);
+                }}
+            />
             <form onSubmit={addNewTimezone}>
                 <TableContainer
                     component={Paper}
                 >
                     <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    Name
-                                </TableCell>
-                                <TableCell>
-                                    City Name
-                                </TableCell>
-                                <TableCell>
-                                    Time Difference
-                                </TableCell>
-                                {currentUserRole === ROLES.admin && (
-                                    <TableCell>
-                                        Username
-                                    </TableCell>
-                                )}
-                                <TableCell>
-                                    Operation
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
+                        {tableHeader}
                         <TableBody>
-                            <TableRow>
-                                <TableCell>
-                                    <TextField
-                                        required
-                                        id="name"
-                                        label="Name"
-                                        variant="standard"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        required
-                                        id="cityName"
-                                        label="City Name"
-                                        variant="standard"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <FormControl fullWidth variant="standard">
-                                        <InputLabel id="timeDifferenceLabel">
-                                            Time Difference
-                                        </InputLabel>
-                                        <Select
-                                            required
-                                            inputProps={{
-                                                id: "timeDifference"
-                                            }}
-                                            labelId="timeDifferenceLabel"
-                                            value={timeDifference}
-                                            onChange={event => setTimeDifference(event.target.value)}
-                                        >
-                                            {TIMEZONES.map(timezone => (
-                                                <MenuItem
-                                                    value={timezone}
-                                                    key={timezone}
-                                                >
-                                                    {timezone}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </TableCell>
-                                {currentUserRole === ROLES.admin && (
-                                    <TableCell>
-                                        <FormControl fullWidth variant="standard">
-                                            <InputLabel id="usernameLabel">
-                                                Username
-                                            </InputLabel>
-                                            <Select
-                                                required
-                                                inputProps={{
-                                                    id: "username"
-                                                }}
-                                                labelId="usernameLabel"
-                                                value={username}
-                                                onChange={event => setUsername(event.target.value)}
-                                            >
-                                                {usernames.map(username => (
-                                                    <MenuItem
-                                                        value={username}
-                                                        key={username}
-                                                    >
-                                                        {username}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    </TableCell>
-                                )}
-                                <TableCell>
-                                    <LoadingButton
-                                        size="small"
-                                        type="submit"
-                                        loading={isLoading}
-                                        variant="text"
-                                    >
-                                        <AddIcon />
-                                    </LoadingButton>
-                                </TableCell>
-                            </TableRow>
+                            {newEntryRow}
                             {timezonesList.map(timezone => (
                                 <React.Fragment key={timezone.id}>
                                     {timezone.id === currentlyEditedTimezoneId && (
@@ -174,48 +239,7 @@ const TimezonesPageComponent = ({
                                         />
                                     )}
                                     {timezone.id !== currentlyEditedTimezoneId && (
-                                        <TableRow key={timezone.id}>
-                                            <TableCell>
-                                                {timezone.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {timezone.cityName}
-                                            </TableCell>
-                                            <TableCell>
-                                                {timezone.timeDifference}
-                                            </TableCell>
-                                            {currentUserRole === ROLES.admin && (
-                                                <TableCell>
-                                                    {timezone.username}
-                                                </TableCell>
-                                            )}
-                                            <TableCell>                                            
-                                                <LoadingButton
-                                                    size="small"
-                                                    loading={isLoading}
-                                                    variant="text"
-                                                    onClick={() => deleteTimezone(timezone.id)}
-                                                >
-                                                    <RemoveIcon />
-                                                </LoadingButton>
-                                                <LoadingButton
-                                                    size="small"
-                                                    loading={isLoading}
-                                                    variant="text"
-                                                    onClick={() => editTimezone(timezone.id)}
-                                                >
-                                                    <EditIcon />
-                                                </LoadingButton>
-                                                <LoadingButton
-                                                    size="small"
-                                                    loading={isLoading}
-                                                    variant="text"
-                                                    onClick={() => displayTimezone(timezone.id)}
-                                                >
-                                                    <PageviewIcon />
-                                                </LoadingButton>
-                                            </TableCell>
-                                        </TableRow>
+                                       generateDisplayRow(timezone) 
                                     )}
                                 </React.Fragment>
                             ))}

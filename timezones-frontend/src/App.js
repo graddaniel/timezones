@@ -5,7 +5,7 @@ import RequireAuthorization from './components/hoc/RequireAuthorization';
 import Menu from './containers/Menu';
 import LoginPage from './containers/LoginPage';
 import RegistrationPage from './containers/RegistrationPage';
-import TimezoneDetailsPage from './containers/TImezoneDetailsPage';
+import TimezoneDetailsPage from './containers/TimezoneDetailsPage';
 import TimezonesPage from './containers/TimezonesPage';
 import UsersPage from './containers/UsersPage';
 

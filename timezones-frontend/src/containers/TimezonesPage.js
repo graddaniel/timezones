@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import TimezonesPageComponent from '../components/TimezonesPage';
 import sendHttpRequest from '../utils/sendHttpRequest';
+import throttle from '../utils/throttle';
 import useRole from '../hooks/useRole';
 import useUsername from '../hooks/useUsername';
 
@@ -13,6 +14,7 @@ import config from '../config.json';
 
 const {
     roles: ROLES,
+    throttleDelayInMS: THROTTLE_DELAY_IN_MS,
 } = config;
 
 const TimezonesPageContainer = () => {
@@ -32,12 +34,13 @@ const TimezonesPageContainer = () => {
         }
     }, []);
 
-    const getTimezonesList = async () => {
+    const getTimezonesList = async (name = null) => {
         setIsLoading(true);
 
         try {
             const response = await sendHttpRequest({
                 endpoint: '/timezone/list',
+                urlParams: name ? { name } : null,
             }, navigate);
 
             setTimezonesList(response);
@@ -157,6 +160,10 @@ const TimezonesPageContainer = () => {
         );
     }
 
+    const filterTimezonesByName = name => {
+        throttle(getTimezonesList, THROTTLE_DELAY_IN_MS, name);
+    }
+
     return (
         <TimezonesPageComponent
             isLoading={isLoading}
@@ -173,6 +180,7 @@ const TimezonesPageContainer = () => {
             displayTimezone={displayTimezone}
             usernames={usernames}
             currentUserRole={currentUserRole}
+            filterTimezonesByName={filterTimezonesByName}
         />
     );
 }
