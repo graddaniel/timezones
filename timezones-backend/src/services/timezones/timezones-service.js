@@ -27,7 +27,7 @@ class TimezonesService {
             throw new InsufficientPrivilegesError();
         }
 
-        const foundUser = await this.usersService.findUser(timezone.username);
+        const foundUser = await this.usersService.findUserByUsername(timezone.username);
         if (!foundUser) {
             throw new UserNotFoundError(timezone.username);
         }
