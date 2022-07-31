@@ -42,7 +42,6 @@ const UsersPageContainer = () => {
 
         setIsLoading(true);
 
-        //TODO username wont appear (from edit), because its not an input
         const {
             username: usernameElement,
             password: passwordElement,

@@ -18,6 +18,10 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { Typography } from "@mui/material";
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+
 
 import EditableTimezoneRow from '../containers/EditableTimezoneRow';
 import config from '../config.json';
@@ -44,6 +48,8 @@ const TimezonesPageComponent = ({
     usernames,
     currentUserRole,
     filterTimezonesByName,
+    error,
+    closeError,
 }) => {
     const [ timeDifference, setTimeDifference ] = useState('');
     const [ username, setUsername ] = useState('');
@@ -208,6 +214,24 @@ const TimezonesPageComponent = ({
             >
                 Timezones
             </Typography>
+            {error && (
+                <Alert
+                    severity="error"
+                    action={
+                        <IconButton
+                          aria-label="close"
+                          color="inherit"
+                          size="small"
+                          onClick={closeError}
+                        >
+                          <CloseIcon fontSize="inherit" />
+                        </IconButton>
+                      }
+                      sx={{ mb: 2 }}
+                >
+                    {error}
+                </Alert>
+            )}
             <TextField
                 id="nameFilter"
                 label="Filter by name"

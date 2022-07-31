@@ -12,6 +12,7 @@ import useUsername from '../hooks/useUsername';
 
 import config from '../config.json';
 
+
 const {
     roles: ROLES,
     throttleDelayInMS: THROTTLE_DELAY_IN_MS,
@@ -22,6 +23,7 @@ const TimezonesPageContainer = () => {
     const [ currentlyEditedTimezoneId, setCurrentlyEditedTimezoneId ] = useState(false);
     const [ timezonesList, setTimezonesList ] = useState([]);
     const [ usernames, setUsernames ] = useState([]);
+    const [ error, setError ] = useState();
     const navigate = useNavigate();
     const currentUserRole = useRole();
     const currentUserName = useUsername();
@@ -44,8 +46,9 @@ const TimezonesPageContainer = () => {
             }, navigate);
 
             setTimezonesList(response);
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -60,8 +63,9 @@ const TimezonesPageContainer = () => {
             }, navigate);
 
             setUsernames(response);
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -72,7 +76,6 @@ const TimezonesPageContainer = () => {
 
         setIsLoading(true);
 
-        //TODO username wont appear (from edit), because its not an input
         const {
             name: nameElement,
             cityName: cityNameElement,
@@ -98,8 +101,9 @@ const TimezonesPageContainer = () => {
             }, navigate);
 
             getTimezonesList();
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -117,8 +121,9 @@ const TimezonesPageContainer = () => {
             }, navigate);
 
             getTimezonesList();
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -138,8 +143,9 @@ const TimezonesPageContainer = () => {
             }, navigate);
 
             getTimezonesList();
+            setError(null);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
@@ -181,6 +187,8 @@ const TimezonesPageContainer = () => {
             usernames={usernames}
             currentUserRole={currentUserRole}
             filterTimezonesByName={filterTimezonesByName}
+            error={error}
+            closeError={() => setError(null)}
         />
     );
 }
