@@ -1,6 +1,7 @@
 import {
     useState,
-    useEffect
+    useEffect,
+    useCallback,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,120 +37,135 @@ const TimezonesPageContainer = () => {
         }
     }, []);
 
-    const getTimezonesList = async (name = null) => {
-        setIsLoading(true);
+    const getTimezonesList = useCallback(
+        async (name = null) => {
+            setIsLoading(true);
 
-        try {
-            const response = await sendHttpRequest({
-                endpoint: '/timezone/list',
-                urlParams: name ? { name } : null,
-            }, navigate);
+            try {
+                const response = await sendHttpRequest({
+                    endpoint: '/timezone/list',
+                    urlParams: name ? { name } : null,
+                }, navigate);
 
-            setTimezonesList(response);
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }
+                setTimezonesList(response);
+                setError(null);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [setIsLoading, setError, navigate, setTimezonesList]
+    );
 
-    const getUsernames = async () => {
-        setIsLoading(true);
+    const getUsernames = useCallback(
+        async () => {
+            setIsLoading(true);
 
-        try {
-            const response = await sendHttpRequest({
-                endpoint: '/user/names',
-            }, navigate);
+            try {
+                const response = await sendHttpRequest({
+                    endpoint: '/user/names',
+                }, navigate);
 
-            setUsernames(response);
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }
+                setUsernames(response);
+                setError(null);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [setIsLoading, setError, navigate, setUsernames]
+    )
 
-    const addNewTimezone = async event => {
-        event.preventDefault();
+    const addNewTimezone = useCallback(
+        async event => {
+            event.preventDefault();
 
-        setIsLoading(true);
+            setIsLoading(true);
 
-        const {
-            name: nameElement,
-            cityName: cityNameElement,
-            timeDifference: timeDifferenceElement,
-            username: usernameElement
-        } = event.target.elements;
+            const {
+                name: nameElement,
+                cityName: cityNameElement,
+                timeDifference: timeDifferenceElement,
+                username: usernameElement
+            } = event.target.elements;
 
-        try {
-            const timezoneData = {
-                name: nameElement.value,
-                cityName: cityNameElement.value,
-                timeDifference: timeDifferenceElement.value,
-                username: currentUserRole === ROLES.admin ?
-                    usernameElement.value :
-                    currentUserName
-            };
+            try {
+                const timezoneData = {
+                    name: nameElement.value,
+                    cityName: cityNameElement.value,
+                    timeDifference: timeDifferenceElement.value,
+                    username: currentUserRole === ROLES.admin ?
+                        usernameElement.value :
+                        currentUserName
+                };
 
-            await sendHttpRequest({
-                method: 'POST',
-                endpoint: '/timezone/add',
-                returnText: true,
-                data: timezoneData,
-            }, navigate);
+                await sendHttpRequest({
+                    method: 'POST',
+                    endpoint: '/timezone/add',
+                    returnText: true,
+                    data: timezoneData,
+                }, navigate);
 
-            getTimezonesList();
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }
+                getTimezonesList();
+                setError(null);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [setIsLoading, setError, navigate, getTimezonesList]
+    );
 
-    const updateTimezone = async updatedTimezone => {
-        setIsLoading(true);
+    const updateTimezone = useCallback(
+        async updatedTimezone => {
+            setIsLoading(true);
 
-        try {
-            await sendHttpRequest({
-                method: 'PATCH',
-                endpoint: '/timezone/edit',
-                returnText: true,
-                data: updatedTimezone,
-            }, navigate);
+            try {
+                await sendHttpRequest({
+                    method: 'PATCH',
+                    endpoint: '/timezone/edit',
+                    returnText: true,
+                    data: updatedTimezone,
+                }, navigate);
 
-            getTimezonesList();
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }
+                getTimezonesList();
+                setError(null);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [setIsLoading, setError, navigate, getTimezonesList]
+    );
 
-    const deleteTimezone = async id => {
-        setIsLoading(true);
+    const deleteTimezone = useCallback(
+        async id => {
+            setIsLoading(true);
 
-        try {
-            await sendHttpRequest({
-                method: 'DELETE',
-                endpoint: '/timezone/delete',
-                returnText: true,
-                urlParams: {
-                    id
-                }
-            }, navigate);
+            try {
+                await sendHttpRequest({
+                    method: 'DELETE',
+                    endpoint: '/timezone/delete',
+                    returnText: true,
+                    urlParams: {
+                        id
+                    }
+                }, navigate);
 
-            getTimezonesList();
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }
+                getTimezonesList();
+                setError(null);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [setIsLoading, setError, navigate, getTimezonesList]
+    )
 
     const displayTimezone = id => {
         const timezoneToDisplay = timezonesList.find(
