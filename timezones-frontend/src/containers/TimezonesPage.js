@@ -6,6 +6,14 @@ import { useNavigate } from 'react-router-dom';
 
 import TimezonesPageComponent from '../components/TimezonesPage';
 import sendHttpRequest from '../utils/sendHttpRequest';
+import useRole from '../hooks/useRole';
+import useUsername from '../hooks/useUsername';
+
+import config from '../config.json';
+
+const {
+    roles: ROLES,
+} = config;
 
 const TimezonesPageContainer = () => {
     const [ isLoading, setIsLoading ] = useState(false);
@@ -13,10 +21,15 @@ const TimezonesPageContainer = () => {
     const [ timezonesList, setTimezonesList ] = useState([]);
     const [ usernames, setUsernames ] = useState([]);
     const navigate = useNavigate();
+    const currentUserRole = useRole();
+    const currentUserName = useUsername();
 
     useEffect(() => {
         getTimezonesList();
-        getUsernames();
+
+        if (currentUserRole === ROLES.admin) {
+            getUsernames();
+        }
     }, []);
 
     const getTimezonesList = async () => {
@@ -65,16 +78,20 @@ const TimezonesPageContainer = () => {
         } = event.target.elements;
 
         try {
+            const timezoneData = {
+                name: nameElement.value,
+                cityName: cityNameElement.value,
+                timeDifference: timeDifferenceElement.value,
+                username: currentUserRole === ROLES.admin ?
+                    usernameElement.value :
+                    currentUserName
+            };
+
             await sendHttpRequest({
                 method: 'POST',
                 endpoint: '/timezone/add',
                 returnText: true,
-                data: {
-                    name: nameElement.value,
-                    cityName: cityNameElement.value,
-                    timeDifference: timeDifferenceElement.value,
-                    username: usernameElement.value,
-                }
+                data: timezoneData,
             }, navigate);
 
             getTimezonesList();
@@ -139,6 +156,7 @@ const TimezonesPageContainer = () => {
             }}
             discardTimezoneChanges={() => setCurrentlyEditedTimezoneId(null)}
             usernames={usernames}
+            currentUserRole={currentUserRole}
         />
     );
 }

@@ -20,7 +20,10 @@ import Select from '@mui/material/Select';
 import EditableTimezoneRow from '../containers/EditableTimezoneRow';
 import config from '../config.json';
 
-const { timezones: TIMEZONES } = config;
+const {
+    timezones: TIMEZONES,
+    roles: ROLES,
+} = config;
 
 const Wrapper = styled('article')({
     height: '90%',
@@ -36,6 +39,7 @@ const TimezonesPageComponent = ({
     submitTimezoneChanges,
     discardTimezoneChanges,
     usernames,
+    currentUserRole,
 }) => {
     const [ timeDifference, setTimeDifference ] = useState('');
     const [ username, setUsername ] = useState('');
@@ -58,9 +62,11 @@ const TimezonesPageComponent = ({
                                 <TableCell>
                                     Time Difference
                                 </TableCell>
-                                <TableCell>
-                                    Username
-                                </TableCell>
+                                {currentUserRole === ROLES.admin && (
+                                    <TableCell>
+                                        Username
+                                    </TableCell>
+                                )}
                                 <TableCell>
                                     Operation
                                 </TableCell>
@@ -109,31 +115,33 @@ const TimezonesPageComponent = ({
                                         </Select>
                                     </FormControl>
                                 </TableCell>
-                                <TableCell>
-                                    <FormControl fullWidth variant="standard">
-                                        <InputLabel id="usernameLabel">
-                                            Username
-                                        </InputLabel>
-                                        <Select
-                                            required
-                                            inputProps={{
-                                                id: "username"
-                                            }}
-                                            labelId="usernameLabel"
-                                            value={username}
-                                            onChange={event => setUsername(event.target.value)}
-                                        >
-                                            {usernames.map(username => (
-                                                <MenuItem
-                                                    value={username}
-                                                    key={username}
-                                                >
-                                                    {username}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </TableCell>
+                                {currentUserRole === ROLES.admin && (
+                                    <TableCell>
+                                        <FormControl fullWidth variant="standard">
+                                            <InputLabel id="usernameLabel">
+                                                Username
+                                            </InputLabel>
+                                            <Select
+                                                required
+                                                inputProps={{
+                                                    id: "username"
+                                                }}
+                                                labelId="usernameLabel"
+                                                value={username}
+                                                onChange={event => setUsername(event.target.value)}
+                                            >
+                                                {usernames.map(username => (
+                                                    <MenuItem
+                                                        value={username}
+                                                        key={username}
+                                                    >
+                                                        {username}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </TableCell>
+                                )}
                                 <TableCell>
                                     <LoadingButton
                                         size="small"
@@ -154,6 +162,7 @@ const TimezonesPageComponent = ({
                                             submitTimezoneChanges={submitTimezoneChanges}
                                             discardTimezoneChanges={discardTimezoneChanges}
                                             usernames={usernames}
+                                            currentUserRole={currentUserRole}
                                         />
                                     )}
                                     {timezone.id !== currentlyEditedTimezoneId && (
@@ -167,9 +176,11 @@ const TimezonesPageComponent = ({
                                             <TableCell>
                                                 {timezone.timeDifference}
                                             </TableCell>
-                                            <TableCell>
-                                                {timezone.username}
-                                            </TableCell>
+                                            {currentUserRole === ROLES.admin && (
+                                                <TableCell>
+                                                    {timezone.username}
+                                                </TableCell>
+                                            )}
                                             <TableCell>                                            
                                                 <LoadingButton
                                                     size="small"

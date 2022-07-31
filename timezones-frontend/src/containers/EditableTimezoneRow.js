@@ -12,7 +12,10 @@ import Select from '@mui/material/Select';
 
 import config from '../config.json';
 
-const { timezones: TIMEZONES } = config;
+const {
+    timezones: TIMEZONES,
+    roles: ROLES,
+} = config;
 
 const EditableTimezoneRow = ({
     isLoading,
@@ -20,6 +23,7 @@ const EditableTimezoneRow = ({
     submitTimezoneChanges,
     discardTimezoneChanges,
     usernames,
+    currentUserRole,
 }) => {
     const [ name, setName ] = useState(timezone.name);
     const [ cityName, setCityName ] = useState(timezone.cityName);
@@ -73,31 +77,33 @@ const EditableTimezoneRow = ({
                     </Select>
                 </FormControl>
             </TableCell>
-            <TableCell>
-                <FormControl fullWidth variant="standard">
-                    <InputLabel id="usernameLabel">
-                        Username
-                    </InputLabel>
-                    <Select
-                        required
-                        inputProps={{
-                            id: "username"
-                        }}
-                        labelId="usernameLabel"
-                        value={username}
-                        onChange={event => setUsername(event.target.value)}
-                    >
-                        {usernames.map(username => (
-                            <MenuItem
-                                value={username}
-                                key={username}
-                            >
-                                {username}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </TableCell>
+            {currentUserRole === ROLES.admin && (
+                <TableCell>
+                    <FormControl fullWidth variant="standard">
+                        <InputLabel id="usernameLabel">
+                            Username
+                        </InputLabel>
+                        <Select
+                            required
+                            inputProps={{
+                                id: "username"
+                            }}
+                            labelId="usernameLabel"
+                            value={username}
+                            onChange={event => setUsername(event.target.value)}
+                        >
+                            {usernames.map(username => (
+                                <MenuItem
+                                    value={username}
+                                    key={username}
+                                >
+                                    {username}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </TableCell>
+            )}
             <TableCell>
                 <LoadingButton
                     size="small"
