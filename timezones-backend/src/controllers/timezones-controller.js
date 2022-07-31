@@ -66,7 +66,9 @@ class TimezonesController {
     }
 
     async listTimezones(req, res) {
-        const timezones = await this.timezonesService.getTimezonesByUser(req.user);
+        const { name } = req.query;
+
+        const timezones = await this.timezonesService.getTimezonesByUser(req.user, name);
 
         res.status(StatusCodes.OK).json(timezones);
     }

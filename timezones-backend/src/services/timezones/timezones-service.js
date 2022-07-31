@@ -86,16 +86,22 @@ class TimezonesService {
         return this.timezonesRepository.deleteTimezone({ _id: id });
     }
 
-    async getTimezonesByUser(user) {
+    async getTimezonesByUser(user, timezoneName) {
         //TODO pagination
         const {
             username,
             role,
         } = user;
 
-        return this.timezonesRepository.findTimezones(
-            role === ROLES.admin ? {} : { username }
-        );
+        const filter = role === ROLES.admin ?
+            {} :
+            { username };
+
+        if (timezoneName) {
+            filter.name = { $regex: timezoneName };
+        }
+
+        return this.timezonesRepository.findTimezones(filter);
     }
 }
 
