@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import decodeJwt from 'jwt-decode';
 
 import RegisterComponent from '../components/Register';
 import sendHttpRequest from '../utils/sendHttpRequest';
@@ -9,7 +7,7 @@ import sendHttpRequest from '../utils/sendHttpRequest';
 const RegisterContainer = () => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ error, setError ] = useState('');
-    let navigate = useNavigate();
+    const [ message, setMessage ] = useState('');
 
     const registerHandler = async (event) => {
         event.preventDefault();
@@ -28,7 +26,7 @@ const RegisterContainer = () => {
         try {
             setIsLoading(true);
 
-            const token = await sendHttpRequest({
+            const response = await sendHttpRequest({
                 method: 'POST',
                 endpoint: '/account/register',
                 returnText: true,
@@ -39,13 +37,7 @@ const RegisterContainer = () => {
                 },
             });
 
-            localStorage.setItem('accessToken', token);
-            
-            const decodedToken = decodeJwt(token);
-
-            decodedToken.role === 'userManager' ?
-                navigate('/users') :
-                navigate('/timezones');
+            setMessage(response);
         } catch (error) {
             setError(error.message);
         } finally {
@@ -57,6 +49,7 @@ const RegisterContainer = () => {
         <RegisterComponent
             isLoading={isLoading}
             error={error}
+            message={message}
             login={registerHandler}
         />
     );

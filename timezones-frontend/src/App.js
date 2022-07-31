@@ -24,7 +24,6 @@ const {
 } = config;
 
 function App() {
-  console.log(config)
   const role = useRole();
 
   const generateMainPageRedirection = () => {

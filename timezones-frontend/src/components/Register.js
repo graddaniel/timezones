@@ -8,6 +8,7 @@ import Alert from '@mui/material/Alert';
 const RegisterPage = ({
     isLoading,
     error,
+    message,
     login,
 }) => {
     return (
@@ -30,7 +31,7 @@ const RegisterPage = ({
                     <TextField
                         required
                         id="repeatedPassword"
-                        type="repeatedPassword"
+                        type="password"
                         label="Repeat Password"
                         variant="standard"
                     />
@@ -46,6 +47,13 @@ const RegisterPage = ({
                             severity="error"
                         >
                             {error}
+                        </Alert>
+                    )}
+                    {message && (
+                        <Alert
+                            severity="info"
+                        >
+                            {message}
                         </Alert>
                     )}
                 </Stack>
