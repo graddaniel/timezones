@@ -1,37 +1,35 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import decodeJwt from 'jwt-decode';
 
-import LoginComponent from '../components/Login';
+import RegistrationPageComponent from '../components/RegistrationPage';
 import sendHttpRequest from '../utils/sendHttpRequest';
-import config from '../config.json';
 
-const {
-  roles: {
-    userManager: USER_MANAGER,
-    admin: ADMIN,
-  }
-} = config;
 
-const LoginContainer = () => {
+const RegistrationPageContainer = () => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ error, setError ] = useState('');
-    let navigate = useNavigate();
+    const [ message, setMessage ] = useState('');
 
-    const loginHandler = async (event) => {
+    const registrationHandler = async (event) => {
         event.preventDefault();
-
-        setIsLoading(true);
 
         const {
             username: usernameElement,
             password: passwordElement,
+            repeatedPassword: repeatedPasswordElement,
         } = event.target.elements;
 
+        if (passwordElement.value !== repeatedPasswordElement.value) {
+            setError('Passwords do not match.');
+            setMessage(null);
+            return;
+        }
+
         try {
-            const token = await sendHttpRequest({
+            setIsLoading(true);
+
+            const response = await sendHttpRequest({
                 method: 'POST',
-                endpoint: '/account/login',
+                endpoint: '/account/register',
                 returnText: true,
                 authorize: false,
                 data: {
@@ -40,27 +38,24 @@ const LoginContainer = () => {
                 },
             });
 
-            localStorage.setItem('accessToken', token);
-            
-            const decodedToken = decodeJwt(token);
-
-            [USER_MANAGER, ADMIN].includes(decodedToken.role) ?
-                navigate('/users') :
-                navigate('/timezones');
+            setError(null)
+            setMessage(response);
         } catch (error) {
             setError(error.message);
+            setMessage(null);
         } finally {
             setIsLoading(false);
         }
     }
 
     return (
-        <LoginComponent
+        <RegistrationPageComponent
             isLoading={isLoading}
             error={error}
-            login={loginHandler}
+            message={message}
+            register={registrationHandler}
         />
     );
 };
 
-export default LoginContainer;
+export default RegistrationPageContainer;

@@ -5,15 +5,15 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Alert from '@mui/material/Alert';
 
 
-const RegisterPage = ({
+const RegistrationPageComponent = ({
     isLoading,
     error,
     message,
-    login,
+    register,
 }) => {
     return (
         <Box sx={{ width: '25%' }}>
-            <form onSubmit={login}>
+            <form onSubmit={register}>
                 <Stack spacing={2}>
                     <TextField
                         required
@@ -62,4 +62,4 @@ const RegisterPage = ({
     );
 };
 
-export default RegisterPage;
+export default RegistrationPageComponent;

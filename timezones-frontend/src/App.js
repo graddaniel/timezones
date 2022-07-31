@@ -3,8 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import RequireAuthorization from './components/hoc/RequireAuthorization';
 
 import Menu from './containers/Menu';
-import Login from './containers/Login';
-import Register from './containers/Register';
+import LoginPage from './containers/LoginPage';
+import RegistrationPage from './containers/RegistrationPage';
 import UsersPage from './containers/UsersPage';
 
 import Forbidden403 from './components/status-pages/403';
@@ -50,11 +50,11 @@ function App() {
         />
         <Route
           path="/login"
-          element={<Login />}
+          element={<LoginPage />}
         />
         <Route
           path="/register"
-          element={<Register />}
+          element={<RegistrationPage />}
         />
         <Route
           path="/timezones"
