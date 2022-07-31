@@ -5,7 +5,14 @@ import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
+import config from '../config.json';
+
+const { timezones: TIMEZONES } = config;
 
 const EditableTimezoneRow = ({
     isLoading,
@@ -41,14 +48,29 @@ const EditableTimezoneRow = ({
                 />
             </TableCell>
             <TableCell>
-                <TextField
-                    required
-                    id="timeDifference"
-                    label="Time Difference"
-                    variant="standard"
-                    value={timeDifference}
-                    onChange={event => setTimeDifference(event.target.value)}
-                />
+                <FormControl variant="standard">
+                    <InputLabel id="timeDifferenceLabel">
+                        Time Difference
+                    </InputLabel>
+                    <Select
+                        required
+                        inputProps={{
+                            id: "timeDifference"
+                        }}
+                        labelId="timeDifferenceLabel"
+                        value={timeDifference}
+                        onChange={event => setTimeDifference(event.target.value)}
+                    >
+                        {TIMEZONES.map(timezone => (
+                            <MenuItem
+                                value={timezone}
+                                key={timezone}
+                            >
+                                {timezone}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </TableCell>
             <TableCell>
                 <TextField
