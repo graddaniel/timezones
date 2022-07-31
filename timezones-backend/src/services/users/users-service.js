@@ -74,8 +74,8 @@ class UsersService {
 
         if (
             currentUserRole !== ROLES.admin && (
-                role === ROLES.admin ||
-                foundUser.role === ROLES.admin
+                role !== ROLES.user ||
+                foundUser.role !== ROLES.user
             )
         ) {
             throw new InsufficientPrivilegesError();
@@ -92,9 +92,13 @@ class UsersService {
         );
     }
 
-    async getUsers() {
+    async getUsers(currentUserRole) {
         //TODO Pagination
-        return this.usersRepository.findUsers({});
+        const filter = currentUserRole === ROLES.admin ?
+            {} :
+            { role: ROLES.user };
+
+        return this.usersRepository.findUsers(filter);
     }
 
     async getAllUsernames() {
@@ -111,7 +115,7 @@ class UsersService {
 
         if (
             curentUserRole !== ROLES.admin &&
-            foundUser.role === ROLES.admin
+            foundUser.role !== ROLES.user
         ) {
             throw new InsufficientPrivilegesError();
         }

@@ -20,7 +20,7 @@ class UserRoutes {
         router.patch('/edit', wrap(usersController.editUser.bind(usersController)));
         router.get('/list', wrap(usersController.listUsers.bind(usersController)));
         router.delete('/delete', wrap(usersController.deleteUser.bind(usersController)));
-        router.get('/names', wrap(usersController.getAllUsernames.bind(usersController)));
+        router.get('/names', allow([ADMIN]), wrap(usersController.getAllUsernames.bind(usersController)));
 
         this.router = router;
     }

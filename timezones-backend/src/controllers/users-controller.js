@@ -49,7 +49,7 @@ class UsersController {
     }
 
     async listUsers(req, res) {
-        const users = await this.usersService.getUsers();
+        const users = await this.usersService.getUsers(req.user.role);
 
         res.status(StatusCodes.OK).json(users);
     }
