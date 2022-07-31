@@ -20,6 +20,7 @@ const RegisterContainer = () => {
 
         if (passwordElement.value !== repeatedPasswordElement.value) {
             setError('Passwords do not match.');
+            setMessage(null);
             return;
         }
 
@@ -37,9 +38,11 @@ const RegisterContainer = () => {
                 },
             });
 
+            setError(null)
             setMessage(response);
         } catch (error) {
             setError(error.message);
+            setMessage(null);
         } finally {
             setIsLoading(false);
         }

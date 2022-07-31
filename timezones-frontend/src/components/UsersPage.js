@@ -13,26 +13,25 @@ import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { styled } from '@mui/system';
 
-import TextFieldDatePicker from '../containers/TextFieldDatePicker';
-import EditionRow from '../containers/EditionRow';
+import EditableUserRow from '../containers/EditableUserRow';
 
 const Wrapper = styled('article')({
     height: '90%',
 });
 
-const AdminPanelComponent = ({
+const UsersPageComponent = ({
     isLoading,
-    currentlyEditedFoodId,
-    foodsList,
-    addNewFood,
-    deleteFood,
-    editFood,
-    submitFoodChanges,
-    discardFoodChanges,
+    currentlyEditedUsername,
+    usersList,
+    addNewUser,
+    deleteUser,
+    editUser,
+    submitUserChanges,
+    discardUserChanges,
 }) => {
     return (
         <Wrapper>
-            <form onSubmit={addNewFood}>
+            <form onSubmit={addNewUser}>
                 <TableContainer
                     component={Paper}
                 >
@@ -40,19 +39,13 @@ const AdminPanelComponent = ({
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                    Name
-                                </TableCell>
-                                <TableCell>
-                                    Consumed at
-                                </TableCell>
-                                <TableCell>
-                                    Kcal
-                                </TableCell>
-                                <TableCell>
-                                    Price
-                                </TableCell>
-                                <TableCell>
                                     Username
+                                </TableCell>
+                                <TableCell>
+                                    Password
+                                </TableCell>
+                                <TableCell>
+                                    Role
                                 </TableCell>
                                 <TableCell>
                                     Operation
@@ -64,41 +57,24 @@ const AdminPanelComponent = ({
                                 <TableCell>
                                     <TextField
                                         required
-                                        id="name"
-                                        label="Name"
-                                        variant="standard"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextFieldDatePicker
-                                        required
-                                        id="consumedAt"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        required
-                                        type="number"
-                                        id="kcal"
-                                        label="Kcal"
-                                        variant="standard"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        required
-                                        type="number"
-                                        id="price"
-                                        label="Price"
-                                        variant="standard"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        required
-                                        type="text"
                                         id="username"
                                         label="Username"
+                                        variant="standard"
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField
+                                        required
+                                        id="password"
+                                        label="Password"
+                                        variant="standard"
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField
+                                        required
+                                        id="role"
+                                        label="Role"
                                         variant="standard"
                                     />
                                 </TableCell>
@@ -113,39 +89,33 @@ const AdminPanelComponent = ({
                                     </LoadingButton>
                                 </TableCell>
                             </TableRow>
-                            {foodsList.map(food => (
-                                <React.Fragment key={food.id}>
-                                    {food.id === currentlyEditedFoodId && (
-                                        <EditionRow
+                            {usersList.map(user => (
+                                <React.Fragment key={user.id}>
+                                    {user.username === currentlyEditedUsername && (
+                                        <EditableUserRow
                                             isLoading={isLoading}
-                                            food={food}
-                                            submitFoodChanges={submitFoodChanges}
-                                            discardFoodChanges={discardFoodChanges}
+                                            user={user}
+                                            submitUserChanges={submitUserChanges}
+                                            discardUserChanges={discardUserChanges}
                                         />
                                     )}
-                                    {food.id !== currentlyEditedFoodId && (
-                                        <TableRow key={food.id}>
+                                    {user.username !== currentlyEditedUsername && (
+                                        <TableRow key={user.id}>
                                             <TableCell>
-                                                {food.name}
+                                                {user.username}
                                             </TableCell>
                                             <TableCell>
-                                                {(new Date(food.consumedAt)).toLocaleString()}
+                                                {user.password}
                                             </TableCell>
                                             <TableCell>
-                                                {food.kcal}
-                                            </TableCell>
-                                            <TableCell>
-                                                {food.price}
-                                            </TableCell>
-                                            <TableCell>
-                                                {food.username}
+                                                {user.role}
                                             </TableCell>
                                             <TableCell>                                            
                                                 <LoadingButton
                                                     size="small"
                                                     loading={isLoading}
                                                     variant="text"
-                                                    onClick={() => deleteFood(food.id)}
+                                                    onClick={() => deleteUser(user.username)}
                                                 >
                                                     <RemoveIcon />
                                                 </LoadingButton>
@@ -153,7 +123,7 @@ const AdminPanelComponent = ({
                                                     size="small"
                                                     loading={isLoading}
                                                     variant="text"
-                                                    onClick={() => editFood(food.id)}
+                                                    onClick={() => editUser(user.username)}
                                                 >
                                                     <EditIcon />
                                                 </LoadingButton>
@@ -170,4 +140,4 @@ const AdminPanelComponent = ({
     );
 }
 
-export default AdminPanelComponent;
+export default UsersPageComponent;

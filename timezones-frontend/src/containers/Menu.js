@@ -17,16 +17,18 @@ const {
 
 const MenuContainer = () => {
     const [ anchorEl, setAnchorEl ] = useState(null);
-    // TODO add roles to config file
-    const currentUsersRole = useRole();
-    const navigate = useNavigate();
     const isOpen = Boolean(anchorEl);
+
     const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
+        setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
-      setAnchorEl(null);
+    setAnchorEl(null);
     };
+
+    const currentUsersRole = useRole();
+    const navigate = useNavigate();
+
 
     const logout = () => {
         localStorage.removeItem('accessToken');
@@ -43,7 +45,7 @@ const MenuContainer = () => {
                 aria-expanded={isOpen ? 'true' : undefined}
                 onClick={handleClick}
             >
-                Navigation Menu
+                Menu
             </Button>
             <Menu
                 id="basic-menu"

@@ -5,6 +5,7 @@ import RequireAuthorization from './components/hoc/RequireAuthorization';
 import Menu from './containers/Menu';
 import Login from './containers/Login';
 import Register from './containers/Register';
+import UsersPage from './containers/UsersPage';
 
 import Forbidden403 from './components/status-pages/403';
 import NotFound404 from './components/status-pages/404';
@@ -67,7 +68,7 @@ function App() {
           path="/users"
           element={
             <RequireAuthorization requiredRoles={[USER_MANAGER, ADMIN]}>
-              <div>Users</div>
+              <UsersPage />
             </RequireAuthorization>
           }
         />
