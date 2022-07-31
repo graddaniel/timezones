@@ -142,6 +142,21 @@ const TimezonesPageContainer = () => {
         }
     }
 
+    const displayTimezone = id => {
+        const timezoneToDisplay = timezonesList.find(
+            timezone => timezone.id === id
+        );
+
+        navigate(
+            '/timezoneDetails',
+            {
+                state: {
+                    timezone: timezoneToDisplay,
+                }
+            }
+        );
+    }
+
     return (
         <TimezonesPageComponent
             isLoading={isLoading}
@@ -155,6 +170,7 @@ const TimezonesPageContainer = () => {
                 setCurrentlyEditedTimezoneId(null);
             }}
             discardTimezoneChanges={() => setCurrentlyEditedTimezoneId(null)}
+            displayTimezone={displayTimezone}
             usernames={usernames}
             currentUserRole={currentUserRole}
         />

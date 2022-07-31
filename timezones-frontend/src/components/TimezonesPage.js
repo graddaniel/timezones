@@ -11,6 +11,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
+import PageviewIcon from '@mui/icons-material/Pageview';
 import { styled } from '@mui/system';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -38,6 +39,7 @@ const TimezonesPageComponent = ({
     editTimezone,
     submitTimezoneChanges,
     discardTimezoneChanges,
+    displayTimezone,
     usernames,
     currentUserRole,
 }) => {
@@ -197,6 +199,14 @@ const TimezonesPageComponent = ({
                                                     onClick={() => editTimezone(timezone.id)}
                                                 >
                                                     <EditIcon />
+                                                </LoadingButton>
+                                                <LoadingButton
+                                                    size="small"
+                                                    loading={isLoading}
+                                                    variant="text"
+                                                    onClick={() => displayTimezone(timezone.id)}
+                                                >
+                                                    <PageviewIcon />
                                                 </LoadingButton>
                                             </TableCell>
                                         </TableRow>
