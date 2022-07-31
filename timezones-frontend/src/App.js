@@ -5,6 +5,7 @@ import RequireAuthorization from './components/hoc/RequireAuthorization';
 import Menu from './containers/Menu';
 import LoginPage from './containers/LoginPage';
 import RegistrationPage from './containers/RegistrationPage';
+import TimezonesPage from './containers/TimezonesPage';
 import UsersPage from './containers/UsersPage';
 
 import Forbidden403 from './components/status-pages/403';
@@ -60,7 +61,7 @@ function App() {
           path="/timezones"
           element={
             <RequireAuthorization requiredRoles={[USER, ADMIN]}>
-              <div>Timezones</div>
+              <TimezonesPage />
             </RequireAuthorization>
           }
         />
