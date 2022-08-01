@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const TimezoneSchema = require('../../schemas/timezone-schema');
 
+const PAGE_SIZE = 6;
+
 class TimezonesRepository {
     constructor(databaseService) {
         this.databaseService = databaseService;
@@ -45,12 +47,24 @@ class TimezonesRepository {
         return this.mapTimezoneDocumentToTimezone(updatedTimezoneDocument);
     }
 
-    async findTimezones(conditions) {
+    async findTimezones(conditions, page) {
         const Timezone = mongoose.model('timezone', TimezoneSchema);
 
-        const timezones = await this.databaseService.find(Timezone, conditions);
+        const timezones = await this.databaseService
+            .find(Timezone, conditions, null, {
+                skip: PAGE_SIZE*page,
+                limit: PAGE_SIZE,
+            });
 
         return timezones.map(this.mapTimezoneDocumentToTimezone);
+    }
+
+    async getTimezonesPages(filter) {
+        const Timezone = mongoose.model('timezone', TimezoneSchema);
+
+        const timezonesCount = await this.databaseService.count(Timezone, filter);
+
+        return Math.ceil(timezonesCount / PAGE_SIZE);
     }
 
     deleteTimezone(conditions) {

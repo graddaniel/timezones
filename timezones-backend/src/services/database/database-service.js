@@ -25,8 +25,8 @@ class DatabaseService {
         return model.create(docs);
     }
 
-    find(model, conditions = {}, projection = {}) {
-        return model.find(conditions, projection);
+    find(model, conditions = {}, projection = {}, options = {}) {
+        return model.find(conditions, projection, options);
     }
 
     findOne(model, conditions = {}) {
@@ -39,6 +39,10 @@ class DatabaseService {
 
     deleteOne(model, conditions = {}) {
         return model.deleteOne(conditions);
+    }
+
+    count(model, conditions = {}) {
+        return model.count(conditions);
     }
 }
 

@@ -85,8 +85,7 @@ class TimezonesService {
         return this.timezonesRepository.deleteTimezone({ _id: id });
     }
 
-    async getTimezonesByUser(user, timezoneName) {
-        //TODO pagination
+    async getTimezonesByUser(user, timezoneName, page = 0) {
         const {
             username,
             role,
@@ -99,8 +98,14 @@ class TimezonesService {
         if (timezoneName) {
             filter.name = { $regex: timezoneName };
         }
+        
+        const timezones = await this.timezonesRepository.findTimezones(filter, page);
+        const pageCount = await this.timezonesRepository.getTimezonesPages(filter);
 
-        return this.timezonesRepository.findTimezones(filter);
+        return {
+            timezones,
+            pageCount,
+        };
     }
 }
 
