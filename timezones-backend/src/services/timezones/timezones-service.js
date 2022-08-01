@@ -71,7 +71,6 @@ class TimezonesService {
 
     async deleteTimezoneById(id, currentUser) {
         const timezone = await this.timezonesRepository.findTimezone({ _id: id });
-
         if (!timezone) {
             throw new TimezoneNotFoundError(id);
         }
