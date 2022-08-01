@@ -42,6 +42,15 @@ class Application {
             process.exit(1);
         }
 
+        await this.initialize();
+
+        const {
+            port: SERVER_PORT
+        } = config.get('server');
+        this.server = this.expressApp.listen(SERVER_PORT, () => console.log(`Listening on port: ${SERVER_PORT}`));
+    }
+
+    async initialize() {
         await this.createServices();
 
         this.createControllers();
@@ -61,16 +70,15 @@ class Application {
         this.createRoutes();
 
         this.expressApp.use(handleErrors);
-        
-        const {
-            port: SERVER_PORT
-        } = config.get('server');
-        this.server = this.expressApp.listen(SERVER_PORT, () => console.log(`Listening on port: ${SERVER_PORT}`));
     }
 
     async stop(callback) {
         this.server.close(callback);
 
+        await this.terminate();
+    }
+
+    async terminate() {
         const databaseService = this.servicesMap.get(Application.Services.DatabaseService);
         await databaseService.terminate();
     }
@@ -127,7 +135,6 @@ class Application {
     }
 
     createRoutes() {
-        //TODO Account or Accounts? fix that! Controller also plural?
         const accountRoutes = new AccountRoutes(
             this.controllersMap.get(Application.Controllers.AccountsController),
         );

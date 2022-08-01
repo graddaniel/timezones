@@ -15,7 +15,6 @@ class TimezoneRoutes {
         } = config.get('roles');
         router.use(extractUserFromJWT);
 
-        //TODO verify privileges inside
         router.post(
             '/add',
             allow([USER, ADMIN]),
