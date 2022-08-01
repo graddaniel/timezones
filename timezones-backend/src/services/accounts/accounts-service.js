@@ -1,4 +1,4 @@
-const AccountCredentialsNotFound = require('./errors/account-credentials-not-valid-error');
+const AccountCredentialsNotValid = require('./errors/account-credentials-not-valid-error');
 
 
 class AccountsService {
@@ -26,7 +26,7 @@ class AccountsService {
         });
 
         if (!user) {
-            throw new AccountCredentialsNotFound();
+            throw new AccountCredentialsNotValid();
         }
 
         return user;

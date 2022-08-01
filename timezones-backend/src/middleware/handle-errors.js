@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 
-const AccountCredentialsNotFound = require('../services/accounts/errors/account-credentials-not-valid-error');
+const AccountCredentialsNotValid = require('../services/accounts/errors/account-credentials-not-valid-error');
 
 const TimezoneNotFoundError = require('../services/timezones/errors/timezone-not-found-error');
 
@@ -31,7 +31,7 @@ module.exports = function handleErrors(err, req, res, next) {
             httpCode = StatusCodes.CONFLICT;
             message = err.message;
             break;
-        case AccountCredentialsNotFound:
+        case AccountCredentialsNotValid:
         case TimezoneNotFoundError:
         case UserNotFoundError:
             httpCode = StatusCodes.NOT_FOUND;
