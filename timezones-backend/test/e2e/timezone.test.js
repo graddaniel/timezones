@@ -1,5 +1,4 @@
 const request = require('supertest');
-const jwt = require('jsonwebtoken');
 const md5 = require('md5');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { StatusCodes } = require('http-status-codes');
@@ -9,7 +8,7 @@ const mongoose = require('mongoose');
 const Application = require('../../src/application');
 const UserSchema = require('../../src/schemas/user-schema');
 
-describe('Users', () => {
+describe('Timezone', () => {
     let application = null;
     let mongod = null;
 
@@ -31,12 +30,6 @@ describe('Users', () => {
             username: "admin",
             password: md5("password123"),
             role: "admin",
-        });
-
-        await User.create({
-            username: "userManager",
-            password: md5("password123"),
-            role: "userManager",
         });
     
         await mongooseInstance.disconnect();
@@ -63,13 +56,9 @@ describe('Users', () => {
         await mongod.stop();
     });
 
-    it('userManager deletes a user', async () => {
+    it('user creates a timezone', async () => {
         const userCredentials = {
             username: "user",
-            password: "password123",
-        };
-        const userManagerCredentials = {
-            username: "userManager",
             password: "password123",
         };
 
@@ -82,46 +71,46 @@ describe('Users', () => {
 
         const loginResponse = await request(application.expressApp)
             .post('/account/login')
-            .send(userManagerCredentials)
+            .send(userCredentials)
             .set('Accept', 'application/json')
             .expect('Content-Type', /text/)
             .expect(StatusCodes.OK);
 
         const jwtToken = loginResponse.text;
 
-        let listResponse = await request(application.expressApp)
-            .get('/user/list')
+        const newTimezone = {
+            name: "Germany time zone",
+            cityName: "Berlin",
+            timeDifference: "+1:00",
+            username: "user"
+        };
+        let addResponse = await request(application.expressApp)
+            .post('/timezone/add')
+            .send(newTimezone)
+            .set('Accept', 'application/json')
+            .set('Authorization', `Bearer ${jwtToken}`)
+            .expect('Content-Type', /text/)
+            .expect(StatusCodes.OK);
+
+        expect(addResponse.text).toBe('Timezone succesfully added.');
+
+        const listResponse = await request(application.expressApp)
+            .get('/timezone/list')
             .set('Accept', 'application/json')
             .set('Authorization', `Bearer ${jwtToken}`)
             .expect('Content-Type', /json/)
             .expect(StatusCodes.OK);
 
         expect(listResponse.body).toMatchObject([{
-            username: "user",
-            password: "482c811da5d5b4bc6d497ffa98491e38",
-            role: "user",
+            cityName: "Berlin",
+            name: "Germany time zone",
+            timeDifference: "+1:00",
+            username: "user"
         }]);
 
-        const deletionResponse = await request(application.expressApp)
-            .delete(`/user/delete?username=${userCredentials.username}`)
-            .set('Accept', 'application/json')
-            .set('Authorization', `Bearer ${jwtToken}`)
-            .expect('Content-Type', /text/)
-            .expect(StatusCodes.OK);
-
-        expect(deletionResponse.text).toBe(`User ${userCredentials.username} succesfully deleted.`);
-
-        listResponse = await request(application.expressApp)
-            .get('/user/list')
-            .set('Accept', 'application/json')
-            .set('Authorization', `Bearer ${jwtToken}`)
-            .expect('Content-Type', /json/)
-            .expect(StatusCodes.OK);
-
-        expect(listResponse.body).toMatchObject([]);
     });
 
-    it('admin demotes a userManager', async () => {
+    it('admin edits a timezone', async () => {
         const adminCredentials = {
             username: "admin",
             password: "password123",
@@ -137,53 +126,57 @@ describe('Users', () => {
         const jwtToken = loginResponse.text;
 
         let listResponse = await request(application.expressApp)
-            .get('/user/list')
+            .get('/timezone/list')
             .set('Accept', 'application/json')
             .set('Authorization', `Bearer ${jwtToken}`)
             .expect('Content-Type', /json/)
             .expect(StatusCodes.OK);
 
         expect(listResponse.body).toMatchObject([{
-            username: "admin",
-            password: "482c811da5d5b4bc6d497ffa98491e38",
-            role: "admin",
-        }, {
-            username: "userManager",
-            password: "482c811da5d5b4bc6d497ffa98491e38",
-            role: "userManager",
+            cityName: "Berlin",
+            name: "Germany time zone",
+            timeDifference: "+1:00",
+            username: "user"
         }]);
 
-        const newUserManagerData = {
-            username: "userManager",
-            password: "482c811da5d5b4bc6d497ffa98491e38",
-            role: "user",
-        };
+        await request(application.expressApp)
+            .post('/user/add')
+            .send({
+                username: "user2",
+                password: "password123",
+                role: "user",
+            })
+            .set('Accept', 'application/json')
+            .set('Authorization', `Bearer ${jwtToken}`)
+            .expect('Content-Type', /text/)
+            .expect(StatusCodes.OK);       
 
+        const editedTimezone = {
+            id: listResponse.body[0].id,
+            username: "user2"
+        };
         const editResponse = await request(application.expressApp)
-            .patch('/user/edit')
-            .send(newUserManagerData)
+            .patch('/timezone/edit')
+            .send(editedTimezone)
             .set('Accept', 'application/json')
             .set('Authorization', `Bearer ${jwtToken}`)
             .expect('Content-Type', /text/)
             .expect(StatusCodes.OK);
 
-        expect(editResponse.text).toBe(`User ${newUserManagerData.username} succesfully edited.`);
+        expect(editResponse.text).toBe('Timezone succesfully edited.');
 
         listResponse = await request(application.expressApp)
-            .get('/user/list')
+            .get('/timezone/list')
             .set('Accept', 'application/json')
             .set('Authorization', `Bearer ${jwtToken}`)
             .expect('Content-Type', /json/)
             .expect(StatusCodes.OK);
 
         expect(listResponse.body).toMatchObject([{
-            username: "admin",
-            password: "482c811da5d5b4bc6d497ffa98491e38",
-            role: "admin",
-        }, {
-            username: "userManager",
-            password: "482c811da5d5b4bc6d497ffa98491e38",
-            role: "user",
+            cityName: "Berlin",
+            name: "Germany time zone",
+            timeDifference: "+1:00",
+            username: "user2"
         }]);
     });
 });
