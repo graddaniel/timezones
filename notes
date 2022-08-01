@@ -12,23 +12,26 @@ If it’s a web application, it must be a single-page application. All actions n
 Functional UI/UX design is needed. You are not required to create a unique design, however, do follow best practices to make the project as functional as possible.
 Bonus: unit and e2e tests.
 
-Accounts:
--Create
--login
--permission levels:
-    -regular - crud own timezones
-    -manager - crud users
-    -admin - crud all timezones and users
+-refactor edit endpoint, to separate user from new data (id based instead of username?)
+-pagination
+-filter
 
-Timezones:
--CRUD for logged in
--name, city name, timezone relative to GMT
+-e2e tests
+-db dump for db provision
 
-Frontend:
--Display timezones:
-    -current time in timezone
-    -time difference relative to browser time
-    -filtered by names
+-make route and controllers singular and services plural?
 
-Backend:
--unit & e2e tests
+
+last step - finish edit, and add jwt validation and extraction
+users actualy should be separated from accounts, because in terms
+of SSO or external auth provider, the users would still be needed
+while accounts not always
+
+Decisions:
+- Routes use singular, services and controllers plural forms,
+    because latter are responsible for multiples in general,
+    while the former focuses on single units. (maybe controllers not?)
+
+Improvements:
+-Put messages into a common file.
+-Localization and internationalization

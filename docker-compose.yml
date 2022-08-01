@@ -7,13 +7,15 @@ services:
     volumes:
       - /data/db
   #db_provision:
-  backend:
-    container_name: toptal-timezones-backend
-    build: ./timezones-backend
-    ports:
-      - "8080:8080"
-  frontend:
-    container_name: toptal-timezones-frontend
-    build: ./timezones-frontend
-    ports:
-      - "3000:3000"
+  #backend:
+    #container_name: toptal-timezones-backend
+    #build: ./timezones-backend
+    #ports:
+      #- "8080:8080"
+    #environment:
+      #- JWT_TOKEN_SECRET=secret123
+  #frontend:
+    #container_name: toptal-timezones-frontend
+    #build: ./timezones-frontend
+    #ports:
+      #- "3000:3000"
