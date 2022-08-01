@@ -25,10 +25,14 @@ const TimezonesPageContainer = () => {
     const [ timezonesList, setTimezonesList ] = useState([]);
     const [ usernames, setUsernames ] = useState([]);
     const [ filter, setFilter ] = useState('');
+    const [ currentPage, setCurrentPage ] = useState(1);
+    const [ pageCount, setPageCount ] = useState(0);
     const [ error, setError ] = useState();
     const navigate = useNavigate();
     const currentUserRole = useRole();
     const currentUserName = useUsername();
+
+    console.log(currentPage)
 
     useEffect(() => {
         getTimezonesListByFilter();
@@ -39,21 +43,41 @@ const TimezonesPageContainer = () => {
     }, []);
 
     useEffect(() => {
-        filterTimezonesByName(filter);
+        throttle(getTimezonesListByFilter, THROTTLE_DELAY_IN_MS, filter);
     }, [filter]);
 
+    const goToPage = (page) => {
+        setCurrentPage(page);
+        getTimezonesListByFilter(filter, page);
+    }
+
     const getTimezonesListByFilter = useCallback(
-        async (name = filter) => {
+        async (name = filter, page = 1) => {
 
             setIsLoading(true);
 
             try {
+                const urlParams = {
+                    page: page - 1,
+                };
+                if (name) {
+                    urlParams.name = name;
+                } 
+
                 const response = await sendHttpRequest({
                     endpoint: '/timezone/list',
-                    urlParams: name ? { name } : null,
+                    urlParams,
                 }, navigate);
 
-                setTimezonesList(response);
+                const {
+                    timezones,
+                    pageCount
+                } = response;
+
+                console.log("PAGE_COUNT", pageCount)
+
+                setPageCount(pageCount);
+                setTimezonesList(timezones);
                 setError(null);
             } catch (error) {
                 setError(error.message);
@@ -188,10 +212,6 @@ const TimezonesPageContainer = () => {
         );
     }
 
-    const filterTimezonesByName = name => {
-        throttle(getTimezonesListByFilter, THROTTLE_DELAY_IN_MS, name);
-    }
-
     return (
         <TimezonesPageComponent
             isLoading={isLoading}
@@ -212,6 +232,9 @@ const TimezonesPageContainer = () => {
             closeError={() => setError(null)}
             filter={filter}
             setFilter={setFilter}
+            currentPage={currentPage}
+            goToPage={goToPage}
+            pageCount={pageCount}
         />
     );
 }

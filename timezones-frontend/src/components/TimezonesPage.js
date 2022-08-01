@@ -21,6 +21,7 @@ import { Typography } from "@mui/material";
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import Pagination from '@mui/material/Pagination';
 
 
 import EditableTimezoneRow from '../containers/EditableTimezoneRow';
@@ -32,7 +33,10 @@ const {
 } = config;
 
 const Wrapper = styled('article')({
-    height: '90%',
+    height: '100%',
+    display: 'flex',
+    'flex-direction': 'column',
+    'align-items': 'center',
 });
 
 const TimezonesPageComponent = ({
@@ -51,6 +55,9 @@ const TimezonesPageComponent = ({
     closeError,
     filter,
     setFilter,
+    currentPage,
+    goToPage,
+    pageCount,
 }) => {
     const [ timeDifference, setTimeDifference ] = useState('');
     const [ username, setUsername ] = useState('');
@@ -270,6 +277,12 @@ const TimezonesPageComponent = ({
                     </Table>
                 </TableContainer>
             </form>
+            <Pagination
+                count={pageCount}
+                color="primary"
+                value={currentPage}
+                onChange={(event, page) => goToPage(page)}
+            />
         </Wrapper>
     );
 }
