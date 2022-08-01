@@ -21,7 +21,7 @@ module.exports = function handleErrors(err, req, res, next) {
         return next(err)
     }
 
-    console.log("handleErrors", JSON.stringify(err), err.message, err.constructor);
+    // console.log("handleErrors", JSON.stringify(err), err.message, err.constructor);
 
     let httpCode = null;
     let message = "";

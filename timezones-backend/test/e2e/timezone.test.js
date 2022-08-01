@@ -101,13 +101,15 @@ describe('Timezone', () => {
             .expect('Content-Type', /json/)
             .expect(StatusCodes.OK);
 
-        expect(listResponse.body).toMatchObject([{
-            cityName: "Berlin",
-            name: "Germany time zone",
-            timeDifference: "+1:00",
-            username: "user"
-        }]);
-
+        expect(listResponse.body).toMatchObject({
+            timezones:[{
+                cityName: "Berlin",
+                name: "Germany time zone",
+                timeDifference: "+1:00",
+                username: "user"
+            }],
+            pageCount: 1,
+        });
     });
 
     it('admin edits a timezone', async () => {
@@ -132,12 +134,15 @@ describe('Timezone', () => {
             .expect('Content-Type', /json/)
             .expect(StatusCodes.OK);
 
-        expect(listResponse.body).toMatchObject([{
-            cityName: "Berlin",
-            name: "Germany time zone",
-            timeDifference: "+1:00",
-            username: "user"
-        }]);
+        expect(listResponse.body).toMatchObject({
+            timezones: [{
+                cityName: "Berlin",
+                name: "Germany time zone",
+                timeDifference: "+1:00",
+                username: "user"
+            }],
+            pageCount: 1,
+        });
 
         await request(application.expressApp)
             .post('/user/add')
@@ -152,7 +157,7 @@ describe('Timezone', () => {
             .expect(StatusCodes.OK);       
 
         const editedTimezone = {
-            id: listResponse.body[0].id,
+            id: listResponse.body.timezones[0].id,
             username: "user2"
         };
         const editResponse = await request(application.expressApp)
@@ -172,11 +177,14 @@ describe('Timezone', () => {
             .expect('Content-Type', /json/)
             .expect(StatusCodes.OK);
 
-        expect(listResponse.body).toMatchObject([{
-            cityName: "Berlin",
-            name: "Germany time zone",
-            timeDifference: "+1:00",
-            username: "user2"
-        }]);
+        expect(listResponse.body).toMatchObject({
+            timezones: [{
+                cityName: "Berlin",
+                name: "Germany time zone",
+                timeDifference: "+1:00",
+                username: "user2"
+            }],
+            pageCount: 1,
+        });
     });
 });

@@ -407,7 +407,7 @@ describe('TimezonesService', () => {
 
             expect(timezonesRepository.findTimezones).toHaveBeenCalledWith({
                 username: user.username,
-            });
+            }, 0);
         });
 
         it('successfully returns all timezones, as admin', async () => {
@@ -418,7 +418,7 @@ describe('TimezonesService', () => {
 
             await timezonesService.getTimezonesByUser(user);
 
-            expect(timezonesRepository.findTimezones).toHaveBeenCalledWith({});
+            expect(timezonesRepository.findTimezones).toHaveBeenCalledWith({}, 0);
         });
 
         it('successfully returns timezones, filtered by name', async () => {
@@ -435,7 +435,7 @@ describe('TimezonesService', () => {
                 name: {
                     $regex: nameFilter,
                 }
-            });
+            }, 0);
         });
     });
 });
