@@ -40,6 +40,7 @@ const MenuContainer = () => {
         <div>
             <Button
                 id="basic-button"
+                variant="outlined"
                 aria-controls={isOpen ? 'basic-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={isOpen ? 'true' : undefined}
@@ -53,7 +54,7 @@ const MenuContainer = () => {
                 open={isOpen}
                 onClose={handleClose}
                 MenuListProps={{
-                'aria-labelledby': 'basic-button',
+                    'aria-labelledby': 'basic-button',
                 }}
             >
                 {currentUsersRole === null && (

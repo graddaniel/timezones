@@ -47,13 +47,13 @@ const TimezonesPageComponent = ({
     displayTimezone,
     usernames,
     currentUserRole,
-    filterTimezonesByName,
     error,
     closeError,
+    filter,
+    setFilter,
 }) => {
     const [ timeDifference, setTimeDifference ] = useState('');
     const [ username, setUsername ] = useState('');
-    const [ filterValue, setFilterValue ] = useState('');
 
     const tableHeader = (
         <TableHead>
@@ -236,10 +236,9 @@ const TimezonesPageComponent = ({
                 id="nameFilter"
                 label="Filter by name"
                 type="search"
-                value={filterValue}
+                value={filter}
                 onChange={event => {
-                    setFilterValue(event.target.value);
-                    filterTimezonesByName(event.target.value);
+                    setFilter(event.target.value);
                 }}
             />
             <form onSubmit={addNewTimezone}>

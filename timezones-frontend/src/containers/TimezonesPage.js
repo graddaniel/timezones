@@ -24,21 +24,27 @@ const TimezonesPageContainer = () => {
     const [ currentlyEditedTimezoneId, setCurrentlyEditedTimezoneId ] = useState(false);
     const [ timezonesList, setTimezonesList ] = useState([]);
     const [ usernames, setUsernames ] = useState([]);
+    const [ filter, setFilter ] = useState('');
     const [ error, setError ] = useState();
     const navigate = useNavigate();
     const currentUserRole = useRole();
     const currentUserName = useUsername();
 
     useEffect(() => {
-        getTimezonesList();
+        getTimezonesListByFilter();
 
         if (currentUserRole === ROLES.admin) {
             getUsernames();
         }
     }, []);
 
-    const getTimezonesList = useCallback(
-        async (name = null) => {
+    useEffect(() => {
+        filterTimezonesByName(filter);
+    }, [filter]);
+
+    const getTimezonesListByFilter = useCallback(
+        async (name = filter) => {
+
             setIsLoading(true);
 
             try {
@@ -55,7 +61,7 @@ const TimezonesPageContainer = () => {
                 setIsLoading(false);
             }
         },
-        [setIsLoading, setError, navigate, setTimezonesList]
+        [setIsLoading, setError, navigate, setTimezonesList, filter]
     );
 
     const getUsernames = useCallback(
@@ -108,7 +114,7 @@ const TimezonesPageContainer = () => {
                     data: timezoneData,
                 }, navigate);
 
-                getTimezonesList();
+                getTimezonesListByFilter();
                 setError(null);
             } catch (error) {
                 setError(error.message);
@@ -116,7 +122,7 @@ const TimezonesPageContainer = () => {
                 setIsLoading(false);
             }
         },
-        [setIsLoading, setError, navigate, getTimezonesList]
+        [setIsLoading, setError, navigate, getTimezonesListByFilter]
     );
 
     const updateTimezone = useCallback(
@@ -131,7 +137,7 @@ const TimezonesPageContainer = () => {
                     data: updatedTimezone,
                 }, navigate);
 
-                getTimezonesList();
+                getTimezonesListByFilter();
                 setError(null);
             } catch (error) {
                 setError(error.message);
@@ -139,7 +145,7 @@ const TimezonesPageContainer = () => {
                 setIsLoading(false);
             }
         },
-        [setIsLoading, setError, navigate, getTimezonesList]
+        [setIsLoading, setError, navigate, getTimezonesListByFilter]
     );
 
     const deleteTimezone = useCallback(
@@ -156,7 +162,7 @@ const TimezonesPageContainer = () => {
                     }
                 }, navigate);
 
-                getTimezonesList();
+                getTimezonesListByFilter();
                 setError(null);
             } catch (error) {
                 setError(error.message);
@@ -164,7 +170,7 @@ const TimezonesPageContainer = () => {
                 setIsLoading(false);
             }
         },
-        [setIsLoading, setError, navigate, getTimezonesList]
+        [setIsLoading, setError, navigate, getTimezonesListByFilter]
     )
 
     const displayTimezone = id => {
@@ -183,7 +189,7 @@ const TimezonesPageContainer = () => {
     }
 
     const filterTimezonesByName = name => {
-        throttle(getTimezonesList, THROTTLE_DELAY_IN_MS, name);
+        throttle(getTimezonesListByFilter, THROTTLE_DELAY_IN_MS, name);
     }
 
     return (
@@ -202,9 +208,10 @@ const TimezonesPageContainer = () => {
             displayTimezone={displayTimezone}
             usernames={usernames}
             currentUserRole={currentUserRole}
-            filterTimezonesByName={filterTimezonesByName}
             error={error}
             closeError={() => setError(null)}
+            filter={filter}
+            setFilter={setFilter}
         />
     );
 }
