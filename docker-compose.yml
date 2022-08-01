@@ -6,7 +6,11 @@ services:
       - "27017:27017"
     volumes:
       - /data/db
-  #db_provision:
+  mongo_provision:
+    container_name: toptal-timezones-mongo-provision
+    build: ./mongo-provision
+    depends_on:
+      - mongo
   #backend:
     #container_name: toptal-timezones-backend
     #build: ./timezones-backend

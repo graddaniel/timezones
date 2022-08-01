@@ -16,9 +16,6 @@ Bonus: unit and e2e tests.
 -pagination
 -filter
 
--e2e tests
--db dump for db provision
-
 -make route and controllers singular and services plural?
 
 
