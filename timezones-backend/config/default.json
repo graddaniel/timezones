@@ -12,7 +12,7 @@
         "admin": "admin"
     },
     "mongo": {
-        "host": "localhost",
+        "host": "toptal-timezones-mongo",
         "port": 27017,
         "databaseName": "toptalTimezones"
     },

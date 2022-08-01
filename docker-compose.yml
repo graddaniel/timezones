@@ -6,20 +6,20 @@ services:
       - "27017:27017"
     volumes:
       - /data/db
-  mongo_provision:
+  mongo-provision:
     container_name: toptal-timezones-mongo-provision
     build: ./mongo-provision
     depends_on:
       - mongo
-  #backend:
-    #container_name: toptal-timezones-backend
-    #build: ./timezones-backend
-    #ports:
-      #- "8080:8080"
-    #environment:
-      #- JWT_TOKEN_SECRET=secret123
-  #frontend:
-    #container_name: toptal-timezones-frontend
-    #build: ./timezones-frontend
-    #ports:
-      #- "3000:3000"
+  backend:
+    container_name: toptal-timezones-backend
+    build: ./timezones-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - JWT_TOKEN_SECRET=secret123
+  frontend:
+    container_name: toptal-timezones-frontend
+    build: ./timezones-frontend
+    ports:
+      - "3000:3000"
