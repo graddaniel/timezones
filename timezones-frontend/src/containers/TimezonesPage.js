@@ -1,5 +1,6 @@
 import {
     useState,
+    useRef,
     useEffect,
     useCallback,
 } from 'react';
@@ -7,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 import TimezonesPageComponent from '../components/TimezonesPage';
 import sendHttpRequest from '../utils/sendHttpRequest';
-import throttle from '../utils/throttle';
 import useRole from '../hooks/useRole';
 import useUsername from '../hooks/useUsername';
 
@@ -16,7 +16,6 @@ import config from '../config.json';
 
 const {
     roles: ROLES,
-    throttleDelayInMS: THROTTLE_DELAY_IN_MS,
 } = config;
 
 const TimezonesPageContainer = () => {
@@ -24,7 +23,7 @@ const TimezonesPageContainer = () => {
     const [ currentlyEditedTimezoneId, setCurrentlyEditedTimezoneId ] = useState(false);
     const [ timezonesList, setTimezonesList ] = useState([]);
     const [ usernames, setUsernames ] = useState([]);
-    const [ filter, setFilter ] = useState('');
+    const filter = useRef('');
     const [ error, setError ] = useState();
     const navigate = useNavigate();
     const currentUserRole = useRole();
@@ -38,12 +37,13 @@ const TimezonesPageContainer = () => {
         }
     }, []);
 
-    useEffect(() => {
-        filterTimezonesByName(filter);
-    }, [filter]);
+    const handleFilterChange = filterValue => {
+        filter.current = filterValue;
+        getTimezonesListByFilter(filterValue);
+    };
 
     const getTimezonesListByFilter = useCallback(
-        async (name = filter) => {
+        async (name = filter.current) => {
 
             setIsLoading(true);
 
@@ -61,7 +61,7 @@ const TimezonesPageContainer = () => {
                 setIsLoading(false);
             }
         },
-        [setIsLoading, setError, navigate, setTimezonesList, filter]
+        [setIsLoading, setError, navigate, setTimezonesList]
     );
 
     const getUsernames = useCallback(
@@ -188,10 +188,6 @@ const TimezonesPageContainer = () => {
         );
     }
 
-    const filterTimezonesByName = name => {
-        throttle(getTimezonesListByFilter, THROTTLE_DELAY_IN_MS, name);
-    }
-
     return (
         <TimezonesPageComponent
             isLoading={isLoading}
@@ -210,8 +206,7 @@ const TimezonesPageContainer = () => {
             currentUserRole={currentUserRole}
             error={error}
             closeError={() => setError(null)}
-            filter={filter}
-            setFilter={setFilter}
+            onFilter={handleFilterChange}
         />
     );
 }

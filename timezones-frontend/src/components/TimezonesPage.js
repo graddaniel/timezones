@@ -6,7 +6,6 @@ import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -21,8 +20,10 @@ import { Typography } from "@mui/material";
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import TextField from '@mui/material/TextField';
 
 
+import Filter from '../containers/Filter';
 import EditableTimezoneRow from '../containers/EditableTimezoneRow';
 import config from '../config.json';
 
@@ -49,8 +50,7 @@ const TimezonesPageComponent = ({
     currentUserRole,
     error,
     closeError,
-    filter,
-    setFilter,
+    onFilter,
 }) => {
     const [ timeDifference, setTimeDifference ] = useState('');
     const [ username, setUsername ] = useState('');
@@ -232,14 +232,9 @@ const TimezonesPageComponent = ({
                     {error}
                 </Alert>
             )}
-            <TextField
-                id="nameFilter"
+            <Filter
                 label="Filter by name"
-                type="search"
-                value={filter}
-                onChange={event => {
-                    setFilter(event.target.value);
-                }}
+                onFilter={onFilter}
             />
             <form onSubmit={addNewTimezone}>
                 <TableContainer
