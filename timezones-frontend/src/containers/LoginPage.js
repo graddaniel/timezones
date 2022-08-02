@@ -18,6 +18,8 @@ const LoginPageContainer = () => {
     const [ error, setError ] = useState('');
     let navigate = useNavigate();
 
+    const closeError = () => setError('');
+
     const loginHandler = async (event) => {
         event.preventDefault();
 
@@ -58,6 +60,7 @@ const LoginPageContainer = () => {
         <LoginPageComponent
             isLoading={isLoading}
             error={error}
+            closeError={closeError}
             login={loginHandler}
         />
     );
