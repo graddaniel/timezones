@@ -10,6 +10,7 @@
         "userManager": "userManager",
         "admin": "admin"
     },
+    "snackbarDurationInMS": 6000,
     "timezones": [
         "-12:00",
         "-11:00",

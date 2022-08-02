@@ -18,8 +18,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { Typography } from "@mui/material";
 import Alert from '@mui/material/Alert';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
+import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 
 
@@ -30,6 +29,7 @@ import config from '../config.json';
 const {
     timezones: TIMEZONES,
     roles: ROLES,
+    snackbarDurationInMS: SNACKBAR_DURATION
 } = config;
 
 const Wrapper = styled('article')({
@@ -205,7 +205,7 @@ const TimezonesPageComponent = ({
                 </LoadingButton>
             </TableCell>
         </TableRow>
-    )
+    );
 
     return (
         <Wrapper>
@@ -214,24 +214,22 @@ const TimezonesPageComponent = ({
             >
                 Timezones
             </Typography>
-            {error && (
+            <Snackbar
+                open={!!error}
+                autoHideDuration={SNACKBAR_DURATION}
+                onClose={closeError}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center'
+                }}
+            >
                 <Alert
                     severity="error"
-                    action={
-                        <IconButton
-                          aria-label="close"
-                          color="inherit"
-                          size="small"
-                          onClick={closeError}
-                        >
-                          <CloseIcon fontSize="inherit" />
-                        </IconButton>
-                      }
-                      sx={{ mb: 2 }}
+                    onClose={closeError}
                 >
                     {error}
                 </Alert>
-            )}
+            </Snackbar>
             <Filter
                 label="Filter by name"
                 onFilter={onFilter}

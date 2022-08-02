@@ -5,6 +5,11 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 
+import config from '../config.json';
+
+const {
+    snackbarDurationInMS: SNACKBAR_DURATION
+} = config;
 
 const LoginPage = ({
     isLoading,
@@ -38,7 +43,7 @@ const LoginPage = ({
                     </LoadingButton>
                     <Snackbar
                         open={!!error}
-                        autoHideDuration={6000}
+                        autoHideDuration={SNACKBAR_DURATION}
                         onClose={closeError}
                         anchorOrigin={{
                             vertical: 'bottom',
