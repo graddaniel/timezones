@@ -12,9 +12,9 @@
         "admin": "admin"
     },
     "mongo": {
-        "host": "toptal-timezones-mongo",
+        "host": "timezones-mongo",
         "port": 27017,
-        "databaseName": "toptalTimezones"
+        "databaseName": "timezones"
     },
     "jwtExpiryTime": "1800s",
     "timezones": [

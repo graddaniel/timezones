@@ -1,25 +1,25 @@
 services:
   mongo:
-    container_name: toptal-timezones-mongo
+    container_name: timezones-mongo
     image: mongo
     ports:
       - "27017:27017"
     volumes:
       - /data/db
   mongo-provision:
-    container_name: toptal-timezones-mongo-provision
+    container_name: timezones-mongo-provision
     build: ./mongo-provision
     depends_on:
       - mongo
   backend:
-    container_name: toptal-timezones-backend
+    container_name: timezones-backend
     build: ./timezones-backend
     ports:
       - "8080:8080"
     environment:
       - JWT_TOKEN_SECRET=secret123
   frontend:
-    container_name: toptal-timezones-frontend
+    container_name: timezones-frontend
     build: ./timezones-frontend
     ports:
       - "3000:3000"
